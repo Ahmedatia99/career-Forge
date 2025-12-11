@@ -20,11 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${_geist.variable} ${_geistMono.variable} antialiased`}
       >
         {/* <Navbar01 /> */}
         {children}
-        
+
       </body>
     </html>
   )
