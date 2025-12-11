@@ -1,10 +1,18 @@
-'use client';
-import { Button } from '@/components/ui/button';
-// import { signIn } from "next-auth/react"
-export default function Home() {
-	return (
-		<div className='flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black'>
-			<Button onClick={() => signIn('github')}>Sign In</Button>
-		</div>
-	);
+import { Header } from "@/components/landing/header"
+import { Hero } from "@/components/landing/hero"
+import { Features } from "@/components/landing/features"
+import { Pricing } from "@/components/landing/pricing"
+import { Footer } from "@/components/landing/footer"
+
+export default function LandingPage() {
+  return (
+    <main className="bg-background">
+      <Header />
+      <Hero />
+      <Features />
+      <Pricing />
+      <Footer />
+    </main>
+  )
 }
+

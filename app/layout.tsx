@@ -1,27 +1,21 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import { Navbar01 } from "@/components/ui/shadcn-io/navbar-01";
+import type React from "react"
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const _geist = Geist({ subsets: ["latin"] })
+const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Tadween",
-  description: "Build Your CV NOW",
-};
+  title: "CV Builder AI - Create Your CV in Minutes",
+  description:
+    "Create professional CVs in minutes with AI. Upload your old CV, generate new sections, and export instantly.",
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en">
@@ -30,7 +24,8 @@ export default function RootLayout({
       >
         {/* <Navbar01 /> */}
         {children}
+        
       </body>
     </html>
-  );
+  )
 }
