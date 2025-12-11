@@ -1,8 +1,17 @@
-"use client";
-export default function Home() {
+import { Header } from "@/components/landing/header"
+import { Hero } from "@/components/landing/hero"
+import { Features } from "@/components/landing/features"
+import { Pricing } from "@/components/landing/pricing"
+import { Footer } from "@/components/landing/footer"
+
+export default function LandingPage() {
   return (
-    <div className="flex text-4xl items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      welcome to my app!
-    </div>
-  );
+    <main className="bg-background">
+      <Header />
+      <Hero />
+      <Features />
+      <Pricing />
+      <Footer />
+    </main>
+  )
 }
