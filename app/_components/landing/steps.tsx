@@ -31,7 +31,7 @@ export function Steps() {
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
             Create a winning CV in
-            <span className="text-primary">3 simple steps</span>
+            <span className="text-primary"> 3 simple steps</span>
           </h2>
           <p className="text-muted-foreground text-lg">
             From upload to download in under 5 minutes.
