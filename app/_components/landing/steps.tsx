@@ -26,12 +26,12 @@ export function Steps() {
   ];
 
   return (
-    <section className="py-20 px-4 bg-background">
+    <section className="py-20 px-4 bg-card/100">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold mb-4">
             Create a winning CV in
-            <span className="text-primary">3 simple steps</span>
+            <span className="text-primary"> 3 simple steps</span>
           </h2>
           <p className="text-muted-foreground text-lg">
             From upload to download in under 5 minutes.
@@ -53,11 +53,12 @@ export function Steps() {
               >
                 <div className="relative mb-6">
                   {step.showBadge && (
-                    <Badge className="absolute -top-1 translate-x-2 bg-primary text-primary-foreground z-20">
+                    <Badge className="absolute -top-1 rounded-full translate-x-2 bg-primary text-primary-foreground z-20">
                       Start
                     </Badge>
                   )}
-                  <div className="w-24 h-24 rounded-full bg-background border-2 border-border flex items-center justify-center relative z-10">
+                  {/* Add border color */}
+                  <div className="w-24 h-24 rounded-full bg-background shadow-xl border-5 border-[#e6effc] flex items-center justify-center relative z-10">
                     <span className="text-4xl font-bold text-primary">
                       {step.number}
                     </span>

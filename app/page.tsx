@@ -1,19 +1,9 @@
-import { Header } from "@/components/landing/header"
-import { Hero } from "@/components/landing/hero"
-import { Features } from "@/components/landing/features"
-import { Pricing } from "@/components/landing/pricing"
-import { Footer } from "@/components/landing/footer"
-import { Steps } from "@/components/landing/steps"
+import LandingPage from "./pages/landing/page"
 
-export default function LandingPage() {
+export default function HomePage() {
   return (
     <main className="bg-background">
-      <Header />
-      <Hero />
-      <Features />
-      <Steps />
-      <Pricing />
-      <Footer />
+      <LandingPage />
     </main>
   )
 }

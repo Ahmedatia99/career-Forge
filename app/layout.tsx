@@ -5,11 +5,9 @@ import "./globals.css";
 
 const _geist = Geist({
   subsets: ["latin"],
-  variable: "--font-geist-sans",
 });
 const _geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-geist-mono",
 });
 
 export const metadata: Metadata = {
@@ -25,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${_geist.variable} ${_geistMono.variable} antialiased`}>
+      <body className={`${_geist.className} ${_geistMono.className} antialiased`}>
         {/* <Navbar01 /> */}
         {children}
       </body>
