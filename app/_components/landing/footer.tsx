@@ -1,4 +1,4 @@
-import { FileText, Twitter, Linkedin } from "lucide-react";
+import { Twitter, Linkedin } from "lucide-react";
 
 export function Footer() {
   return (
@@ -27,13 +27,13 @@ export function Footer() {
             <div className="flex gap-3">
               <a
                 href="#"
-                className="text-muted-foreground hover:text-foreground transition"
+                className="text-muted-foreground hover:text-primary transition"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-muted-foreground hover:text-foreground transition"
+                className="text-muted-foreground hover:text-primary transition"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -45,22 +45,22 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Product</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Pricing
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Templates
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Examples
                 </a>
               </li>
@@ -72,22 +72,22 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Resources</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Blog
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Career Advice
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Help Center
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   ATS Checker
                 </a>
               </li>
@@ -99,22 +99,22 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Company</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   About
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Contact
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-foreground transition">
+                <a href="#" className="hover:text-primary transition">
                   Terms of Service
                 </a>
               </li>

@@ -7,22 +7,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ArrowRight, Check } from "lucide-react";
+import { ArrowRight, Check, Minus } from "lucide-react";
+import { Kbd } from "@/components/ui/kbd";
 
 const plans = [
   {
     name: "Free",
     price: "$0",
     period: "/mo",
-    features: [
-      "Basic AI Suggestions",
-      "1 Resume Template",
-      "PDF export",
-      "Basic support",
-    ],
+    features: ["1 Resume Template", "Basic AI Suggestions", "No Cover Letter"],
     description: "Perfect for trying out the builder.",
     cta: "Sign Up Free",
     highlighted: false,
+    Kbd: false,
   },
   {
     name: "Pro Monthly",
@@ -37,22 +34,24 @@ const plans = [
     description: "Everything you need to get hired.",
     cta: "Get Started",
     highlighted: true,
+    Kbd: false,
   },
   {
     name: "Pro Yearly",
-    price: "$120",
-    period: "/year",
+    price: "$9",
+    period: "/mo",
     features: [
       "All Pro Monthly Features",
       "Priority Support",
       "LinkedIn Profile Audit",
     ],
-    description: "Everything you need to get hired.",
+    description: "",
     cta: "Select Yearly",
     highlighted: false,
+    Kbd: true,
   },
 ];
-
+// make the kbd green
 export function Pricing() {
   return (
     <section className="py-16 md:py-24 px-5">
@@ -69,7 +68,7 @@ export function Pricing() {
               key={plan.name}
               className={`border transition relative flex flex-col ${
                 plan.highlighted
-                  ? "border-primary bg-white ring-1 ring-primary"
+                  ? "border-primary bg-white ring-1 ring-primary shadow-xl"
                   : "border-border hover:border-primary/50"
               }`}
             >
@@ -89,18 +88,37 @@ export function Pricing() {
                 </div>
               </CardHeader>
               <CardContent className="space-y-6 flex-1 flex flex-col">
-                <CardDescription>{plan.description}</CardDescription>
+                <CardDescription>
+                  {plan.description}{" "}
+                  {plan.Kbd && (
+                    <Kbd className="text-xs bg-green-50 text-green-600 font-semibold">
+                      Billed 108$ yearly (Save 40%)
+                    </Kbd>
+                  )}
+                </CardDescription>
                 <div className="space-y-3 flex-1">
                   {plan.features.map((feature) => (
                     <div key={feature} className="flex items-center gap-3">
-                      <Check className="w-5 h-5 text-primary shrink-0" />
-                      <span className="text-sm">{feature}</span>
+                      {feature.startsWith("No ") ? (
+                        <Minus className="w-5 h-5 text-muted-foreground shrink-0" />
+                      ) : (
+                        <Check className="w-5 h-5 text-green-400 shrink-0" />
+                      )}
+                      <span
+                        className={`text-sm ${
+                          feature.startsWith("No ")
+                            ? "text-muted-foreground"
+                            : ""
+                        }`}
+                      >
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
                 <Button
                   size="lg"
-                  className="w-full mt-auto"
+                  className= {plan.highlighted ? "w-full mt-auto " : "w-full mt-auto bg-transparent border-primary text-primary"}
                   variant={plan.highlighted ? "default" : "outline"}
                 >
                   {plan.cta}
@@ -109,9 +127,10 @@ export function Pricing() {
             </Card>
           ))}
         </div>
+        {/* view all plan details button be little further from the cards */}
         <Button
           variant="link"
-          className="mt-4 w-full text-blue-600 hover:text-blue-700 font-medium"
+          className="mt-12 w-full text-blue-600 hover:text-blue-700 font-medium "
         >
           View all plan details
           <ArrowRight className="ml-1 h-4 w-4" />
