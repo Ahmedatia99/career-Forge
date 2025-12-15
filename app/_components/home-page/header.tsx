@@ -1,8 +1,9 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function Header() {
   return (
-    <header className="border-border bg-card sticky top-0 z-50">
+    <header className="border shadow-md bg-card sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center">
@@ -42,11 +43,17 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-3">
-          
-          <Button className="px-5 py-5 border-primary text-primary rounded-full" variant="outline" size="sm">
+          <Link
+            href="/login"
+            className="px-5 py-5 border-primary text-primary rounded-full"
+            variant="outline"
+            size="sm"
+          >
             Login
+          </Link>
+          <Button className="px-5 py-5 rounded-full" size="sm">
+            Create CV
           </Button>
-          <Button className="px-5 py-5 rounded-full" size="sm">Create CV</Button>
         </div>
       </div>
     </header>
