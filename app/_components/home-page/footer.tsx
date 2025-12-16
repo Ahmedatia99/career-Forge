@@ -4,7 +4,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-muted/30 py-12 px-4">
       <div className="max-w-6xl mx-auto">
-        <div className="grid md:grid-cols-4 gap-8 mb-8">
+        <div className="grid md:grid-cols-4 grid-cols-2 gap-8 mb-8">
           {/* Brand Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -125,7 +125,7 @@ export function Footer() {
         {/* Copyright */}
         <div className="border-t border-border pt-8">
           <p className="text-sm text-muted-foreground text-center">
-            © 2023 CareerForge ATS. All rights reserved.
+            © 2026 CareerForge ATS. All rights reserved.
           </p>
         </div>
       </div>
