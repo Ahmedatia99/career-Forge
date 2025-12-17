@@ -8,7 +8,3 @@ export type RegisterFormData = {
 	password: string;
 	confirmedPassword: string;
 };
-
-export interface BrandingSectionProps {
-	isMobile?: boolean;
-}
