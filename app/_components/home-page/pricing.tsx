@@ -54,9 +54,9 @@ const plans = [
 // make the kbd green
 export function Pricing() {
   return (
-    <section className="py-16 md:py-24 px-5">
+    <section id="pricing" className="py-16 md:py-24 px-5">
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">
+        <h2 className="text-2xl md:text-4xl font-bold text-center mb-4">
           Simple, Transparent Pricing
         </h2>
         <p className="text-center text-muted-foreground mb-12 max-w-2xl mx-auto">
@@ -66,7 +66,7 @@ export function Pricing() {
           {plans.map((plan) => (
             <Card
               key={plan.name}
-              className={`border transition relative flex flex-col ${
+              className={`border transition relative flex flex-col  ${
                 plan.highlighted
                   ? "border-primary bg-white ring-1 ring-primary shadow-xl"
                   : "border-border hover:border-primary/50"
@@ -78,7 +78,7 @@ export function Pricing() {
                   MOST POPULAR
                 </Badge>
               )}
-              <CardHeader className={plan.highlighted ? "pt-8" : "pt-6"}>
+              <CardHeader className={`justify-center ${plan.highlighted ? "pt-8" : "pt-6"}`}>
                 <CardTitle>{plan.name}</CardTitle>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl md:text-4xl font-bold">
@@ -118,7 +118,11 @@ export function Pricing() {
                 </div>
                 <Button
                   size="lg"
-                  className= {plan.highlighted ? "w-full mt-auto " : "w-full mt-auto bg-transparent border-primary text-primary"}
+                  className={
+                    plan.highlighted
+                      ? "w-full mt-auto "
+                      : "w-full mt-auto bg-transparent border-primary text-primary"
+                  }
                   variant={plan.highlighted ? "default" : "outline"}
                 >
                   {plan.cta}

@@ -26,10 +26,10 @@ export function Steps() {
   ];
 
   return (
-    <section className="py-20 px-4 bg-card/100">
+    <section className="py-20 px-4 bg-card">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-4">
             Create a winning CV in
             <span className="text-primary"> 3 simple steps</span>
           </h2>
@@ -58,7 +58,7 @@ export function Steps() {
                     </Badge>
                   )}
                   {/* Add border color */}
-                  <div className="w-24 h-24 rounded-full bg-background shadow-xl border-5 border-[#e6effc] flex items-center justify-center relative z-10">
+                  <div className="w-24 h-24 rounded-full bg-background shadow-xl border-5 border-[#e6effc] flex items-center justify-center relative z-10 ">
                     <span className="text-4xl font-bold text-primary">
                       {step.number}
                     </span>

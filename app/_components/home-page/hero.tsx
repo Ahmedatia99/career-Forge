@@ -5,7 +5,7 @@ export function Hero() {
     <section className="relative py-16 md:py-24 px-4 bg-card">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         <div className="flex flex-col gap-6">
-          <h1 className="text-4xl md:text-5xl font-bold text-balance">
+          <h1 className="md:text-5xl sm:text-4xl text-3xl font-bold text-balance">
             “Create Your CV in Minutes with AI”
           </h1>
           <p className="text-lg text-muted-foreground leading-relaxed">
