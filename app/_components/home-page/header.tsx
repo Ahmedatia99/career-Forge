@@ -23,26 +23,7 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-8">
-          <Link
-            href="#features"
-            className="text-sm font-medium hover:text-primary transition"
-          >
-            Features
-          </Link>
-          <Link
-            href="#pricing"
-            className="text-sm font-medium hover:text-primary transition"
-          >
-            Pricing
-          </Link>
-          <Link
-            href="#about"
-            className="text-sm font-medium hover:text-primary transition"
-          >
-            About
-          </Link>
-        </nav>
+       
 
         {/* Desktop Buttons */}
         <div className="hidden md:flex items-center gap-3">
