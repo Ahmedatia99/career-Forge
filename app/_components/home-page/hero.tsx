@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button"
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -14,18 +15,16 @@ export function Hero() {
           </p>
 
           <div className="flex gap-4 flex-wrap">
-            <Button
-              size="lg"
-              className="px-8 border-primary rounded-full"
-            >
+            <Button size="lg" className="px-8 border-primary rounded-full">
               Create CV
             </Button>
             <Button
+            asChild
               size="lg"
               variant="outline"
               className="px-12 bg-transparent border-primary text-primary rounded-full"
             >
-              Login
+              <Link href="/login">Login</Link>
             </Button>
           </div>
         </div>

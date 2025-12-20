@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowRight, Check, Minus } from "lucide-react";
-import { Kbd } from "@/components/ui/kbd";
 
 const plans = [
   {
@@ -91,9 +90,9 @@ export function Pricing() {
                 <CardDescription>
                   {plan.description}{" "}
                   {plan.Kbd && (
-                    <Kbd className="text-xs bg-green-50 text-green-600 font-semibold">
+                    <Badge className="text-xs bg-green-50 text-green-600 font-semibold">
                       Billed 108$ yearly (Save 40%)
-                    </Kbd>
+                    </Badge>
                   )}
                 </CardDescription>
                 <div className="space-y-3 flex-1">
