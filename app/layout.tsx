@@ -7,6 +7,7 @@ import {
   Ubuntu,
   Playfair_Display,
   Roboto_Slab,
+  Share_Tech,
 } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
@@ -32,6 +33,10 @@ const _robotoSlab = Roboto_Slab({
   subsets: ["latin"],
   weight: ["400", "500", "600", "700", "800", "900"],
 });
+const _shareTech = Share_Tech({
+  subsets: ["latin"],
+  weight: ["400"],
+}); 
 export const metadata: Metadata = {
   title: "CV Builder AI - Create Your CV in Minutes",
   description:
@@ -53,6 +58,7 @@ export default function RootLayout({
         ${_ubuntu.className}
         ${_playfairDisplay.className}
         ${_robotoSlab.className}
+        ${_shareTech.className}
         antialiased`}
       >
         {/* <Navbar01 /> */}
