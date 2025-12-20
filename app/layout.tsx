@@ -20,6 +20,7 @@ const _geistMono = Geist_Mono({
 });
 const _nunito = Nunito({
   subsets: ["latin"],
+  weight: ["300", "400", "500", "700"],
 });
 const _ubuntu = Ubuntu({
   subsets: ["latin"],
@@ -36,7 +37,7 @@ const _robotoSlab = Roboto_Slab({
 const _shareTech = Share_Tech({
   subsets: ["latin"],
   weight: ["400"],
-}); 
+});
 export const metadata: Metadata = {
   title: "CV Builder AI - Create Your CV in Minutes",
   description:
@@ -51,15 +52,14 @@ export default function RootLayout({
   return (
     <html lang="en" className="scroll-smooth">
       <body
-        className={`
-        ${_geist.className}
-        ${_geistMono.className}
-        ${_nunito.className}
-        ${_ubuntu.className}
-        ${_playfairDisplay.className}
-        ${_robotoSlab.className}
-        ${_shareTech.className}
-        antialiased`}
+        // className={`${_geistMono.className} antialiased`}
+
+        // To test different fonts, uncomment ONE of these:
+        className={`${_nunito.className} antialiased`}
+        // className={`${_ubuntu.className} antialiased`}
+        // className={`${_robotoSlab.className} antialiased`}
+        // className={`${_shareTech.className} antialiased`}
+        // className={`${_playfairDisplay.className} antialiased`}
       >
         {/* <Navbar01 /> */}
         <AuthProvider>{children}</AuthProvider>
