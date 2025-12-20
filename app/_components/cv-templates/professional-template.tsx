@@ -1,4 +1,4 @@
-import type { CV } from "@/lib/types"
+import type { CV } from "@/types/types"
 import { Mail, Phone, MapPin, LinkIcon } from "lucide-react"
 
 interface ProfessionalTemplateProps {
