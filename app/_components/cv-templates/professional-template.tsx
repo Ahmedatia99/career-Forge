@@ -1,16 +1,22 @@
-import type { CV } from "@/lib/types"
-import { Mail, Phone, MapPin, LinkIcon } from "lucide-react"
+import type { CV } from "@/types/types";
+import { Mail, Phone, MapPin, LinkIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { TechText } from "./tech-text";
+// import { parseSkills } from "@/lib/skills-utils";
 
 interface ProfessionalTemplateProps {
-  data: CV
+  data: CV;
 }
 
 export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
   const formatDate = (date: string) => {
-    if (!date) return ""
-    const d = new Date(date + "-01")
-    return d.toLocaleDateString("en-US", { month: "short", year: "numeric" })
-  }
+    if (!date) return "";
+    const d = new Date(date + "-01");
+    return d.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+  };
+
+  // Parse skills to handle comma-separated values
+  // const parsedSkills = parseSkills(data.skills);
 
   return (
     <div className="bg-white text-gray-900 shadow-lg">
@@ -42,17 +48,19 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
       </div>
 
       <div className="p-8">
-        {/* Professional Summary */}
+        {/* Professional Summary - with tech word bolding */}
         {data.professionalSummary && (
           <section className="mb-6">
             <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">
               Professional Summary
             </h2>
-            <p className="leading-relaxed text-gray-700">{data.professionalSummary}</p>
+            <p className="leading-relaxed text-gray-700">
+              <TechText text={data.professionalSummary} />
+            </p>
           </section>
         )}
 
-        {/* Work Experience */}
+        {/* Work Experience - with tech word bolding */}
         {data.workExperience.length > 0 && (
           <section className="mb-6">
             <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">
@@ -68,19 +76,24 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
                     </div>
                     <div className="text-right text-sm text-gray-600">
                       <p>
-                        {formatDate(exp.startDate)} - {exp.current ? "Present" : formatDate(exp.endDate)}
+                        {formatDate(exp.startDate)} -{" "}
+                        {exp.current ? "Present" : formatDate(exp.endDate)}
                       </p>
                       {exp.location && <p>{exp.location}</p>}
                     </div>
                   </div>
-                  {exp.description && <p className="mt-2 leading-relaxed text-gray-700">{exp.description}</p>}
+                  {exp.description && (
+                    <p className="mt-2 leading-relaxed text-gray-700">
+                      <TechText text={exp.description} />
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* Education */}
+        {/* Education - with tech word bolding */}
         {data.education.length > 0 && (
           <section className="mb-6">
             <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">
@@ -92,57 +105,88 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
                   <div className="flex items-start justify-between">
                     <div>
                       <h3 className="text-lg font-semibold">{edu.degree}</h3>
-                      <p className="font-medium text-blue-800">{edu.institution}</p>
+                      <p className="font-medium text-blue-800">
+                        {edu.institution}
+                      </p>
                     </div>
                     <div className="text-right text-sm text-gray-600">
                       <p>
-                        {formatDate(edu.startDate)} - {edu.current ? "Present" : formatDate(edu.endDate)}
+                        {formatDate(edu.startDate)} -{" "}
+                        {edu.current ? "Present" : formatDate(edu.endDate)}
                       </p>
                       {edu.location && <p>{edu.location}</p>}
                     </div>
                   </div>
-                  {edu.description && <p className="mt-2 leading-relaxed text-gray-700">{edu.description}</p>}
+                  {edu.description && (
+                    <p className="mt-2 leading-relaxed text-gray-700">
+                      <TechText text={edu.description} />
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
           </section>
         )}
 
-        {/* Skills */}
+        {/* Skills - displayed as badges with comma separation support */}
         {data.skills.length > 0 && (
           <section className="mb-6">
-            <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">Skills</h2>
+            <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">
+              Skills
+            </h2>
             <div className="flex flex-wrap gap-2">
-              {data.skills.map((skill) => (
-                <span key={skill} className="rounded bg-blue-100 px-3 py-1 text-sm font-medium text-blue-900">
+              {data.skills.map((skill, index) => (
+                <Badge
+                  key={`${skill}-${index}`}
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-900 hover:bg-blue-200"
+                >
                   {skill}
-                </span>
+                </Badge>
               ))}
             </div>
           </section>
         )}
 
-        {/* Projects */}
+        {/* Projects - with tech word bolding */}
         {data.projects.length > 0 && (
           <section className="mb-6">
-            <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">Projects</h2>
+            <h2 className="mb-3 border-b-2 border-blue-800 pb-2 text-xl font-bold uppercase tracking-wide">
+              Projects
+            </h2>
             <div className="space-y-4">
               {data.projects.map((project) => (
                 <div key={project.id}>
                   <div className="flex items-start justify-between">
                     <h3 className="text-lg font-semibold">{project.title}</h3>
                     {project.url && (
-                      <a href={project.url} className="flex items-center gap-1 text-sm text-blue-800 hover:underline">
+                      <a
+                        href={project.url}
+                        className="flex items-center gap-1 text-sm text-blue-800 hover:underline"
+                      >
                         <LinkIcon className="h-3 w-3" />
                         View
                       </a>
                     )}
                   </div>
-                  <p className="mt-1 leading-relaxed text-gray-700">{project.description}</p>
+                  <p className="mt-1 leading-relaxed text-gray-700">
+                    <TechText text={project.description} />
+                  </p>
                   {project.technologies.length > 0 && (
-                    <p className="mt-2 text-sm text-gray-600">
-                      <span className="font-medium">Technologies:</span> {project.technologies.join(", ")}
-                    </p>
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      <span className="text-sm font-medium text-gray-600">
+                        Technologies:
+                      </span>
+                      {project.technologies.map((tech, index) => (
+                        <Badge
+                          key={`${tech}-${index}`}
+                          variant="outline"
+                          className="text-xs"
+                        >
+                          {tech}
+                        </Badge>
+                      ))}
+                    </div>
                   )}
                 </div>
               ))}
@@ -160,7 +204,9 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
               {data.languages.map((lang) => (
                 <div key={lang.id} className="flex justify-between">
                   <span className="font-medium">{lang.name}</span>
-                  <span className="capitalize text-gray-600">{lang.proficiency}</span>
+                  <span className="capitalize text-gray-600">
+                    {lang.proficiency}
+                  </span>
                 </div>
               ))}
             </div>
@@ -168,5 +214,5 @@ export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
         )}
       </div>
     </div>
-  )
+  );
 }
