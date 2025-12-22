@@ -8,7 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowRight, Check, Minus } from "lucide-react";
-
 const plans = [
   {
     name: "Free",
@@ -18,7 +17,7 @@ const plans = [
     description: "Perfect for trying out the builder.",
     cta: "Sign Up Free",
     highlighted: false,
-    Kbd: false,
+    badge: false,
   },
   {
     name: "Pro Monthly",
@@ -33,7 +32,7 @@ const plans = [
     description: "Everything you need to get hired.",
     cta: "Get Started",
     highlighted: true,
-    Kbd: false,
+    badge: false,
   },
   {
     name: "Pro Yearly",
@@ -47,10 +46,10 @@ const plans = [
     description: "",
     cta: "Select Yearly",
     highlighted: false,
-    Kbd: true,
+    badge: true,
   },
 ];
-// make the kbd green
+
 export function Pricing() {
   return (
     <section id="pricing" className="py-16 md:py-24 px-5">
@@ -71,13 +70,20 @@ export function Pricing() {
                   : "border-border hover:border-primary/50"
               }`}
             >
-              {/* MOST POPULAR Badge font be smaller */}
               {plan.highlighted && (
-                <Badge className="absolute -top-1 left-0 w-full rounded-t-xl rounded-b-none justify-center py-1 text-xs bg-primary text-primary-foreground hover:bg-primary shadow-sm z-10">
+                <Badge
+                  className={`absolute -top-1 left-0 w-full rounded-t-xl rounded-b-none justify-center py-1 text-xs bg-primary text-primary-foreground hover:bg-primary shadow-sm z-10 ${
+                    plan.badge ? "bg-green-50 text-green-600" : ""
+                  }`}
+                >
                   MOST POPULAR
                 </Badge>
               )}
-              <CardHeader className={`justify-center ${plan.highlighted ? "pt-8" : "pt-6"}`}>
+              <CardHeader
+                className={`justify-center ${
+                  plan.highlighted ? "pt-8" : "pt-6"
+                }`}
+              >
                 <CardTitle>{plan.name}</CardTitle>
                 <div className="flex items-baseline gap-2">
                   <span className="text-3xl md:text-4xl font-bold">
@@ -89,7 +95,7 @@ export function Pricing() {
               <CardContent className="space-y-6 flex-1 flex flex-col">
                 <CardDescription>
                   {plan.description}{" "}
-                  {plan.Kbd && (
+                  {plan.badge && (
                     <Badge className="text-xs bg-green-50 text-green-600 font-semibold">
                       Billed 108$ yearly (Save 40%)
                     </Badge>

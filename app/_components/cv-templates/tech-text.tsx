@@ -1,6 +1,6 @@
 "use client"
 
-import { parseTextWithTechKeywords } from "@/lib/tech-keywords"
+import { parseTextWithTechKeywords } from "@/lib/tech-regex"
 
 interface TechTextProps {
   text: string
