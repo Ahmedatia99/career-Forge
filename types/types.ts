@@ -8,15 +8,21 @@ export type RegisterFormData = {
 	password: string;
 	confirmedPassword: string;
 };
-
+export interface UserLink {
+  id:string
+  label: string;
+  url: string;
+}
 export interface UserProfile {
   firstName: string
   lastName: string
   email: string
   phone: string
   country: string
+   links?: UserLink[];
   profilePicture?: string
 }
+
 
 export interface WorkExperience {
   id: string
@@ -53,18 +59,33 @@ export interface Language {
   name: string
   proficiency: string
 }
+export interface Certification {
+  id: string
+  name: string
+  company?: string
+  startDate: string
+  description:string
+  url?: string
+}
+
+export interface Skill {
+  id: string
+  category: string
+  skills: string[]
+}
 
 export interface CV {
   id: string
   title: string
   createdAt: string
   updatedAt: string
-  personalInfo: UserProfile
-  professionalSummary: string
-  workExperience: WorkExperience[]
-  education: Education[]
-  skills: string[]
-  projects: Project[]
-  languages: Language[]
+  personalInfo?: UserProfile
+  professionalSummary?: string
+  workExperience?: WorkExperience[]
+  education?: Education[]
+  skills?: Skill[]
+  projects?: Project[]
+  languages?: Language[]
+  certifications?: Certification[]
   template: string
 }
