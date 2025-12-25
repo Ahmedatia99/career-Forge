@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button"
 import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
   return (
@@ -31,7 +32,9 @@ export function Hero() {
 
         <div className="relative">
           {/* add shadow to the image */}
-          <img
+          <Image
+            width={500}
+            height={500}
             src="cvTemplate.png"
             className="shadow-2xl rounded-lg border-2 border-border"
             alt="Hero"
