@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/card";
 import { Sparkles, Upload, Palette, BarChart } from "lucide-react";
 
-// make the background color of the icon same as the icon color but with less opacity
 const features = [
   {
     icon: (
