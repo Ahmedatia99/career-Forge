@@ -1,25 +1,23 @@
-"use client";
-import { useAuth } from "@/lib/auth-context";
-import { Button } from "@/components/ui/button";
-import { FileText, LogOut, User } from "lucide-react";
-import Link from "next/link";
+'use client';
+import { useAuth } from '@/lib/auth-context';
+import { Button } from '@/components/ui/button';
+import { FileText, LogOut, User } from 'lucide-react';
+import Link from 'next/link';
 
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 export function DashboardHeader() {
-  const { user, logout, isLoading } = useAuth();
-  if (isLoading) return null;
-  const initials = user
-    ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
-    : "U";
+	const { user, logout, isLoading } = useAuth();
+	if (isLoading) return null;
+	const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : 'U';
 
   return (
     <header className="border-b bg-card">
