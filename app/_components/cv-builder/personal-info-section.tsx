@@ -25,10 +25,13 @@ export function PersonalInfoSection({
 
     onChange({ ...data, links: newLinks });
   };
-  const removeLink = (index: number) => {
+  const removeLink = (id: string) => {
     const newLinks = [...(data.links ?? [])];
-    newLinks.splice(index, 1);
-    onChange({ ...data, links: newLinks });
+    const index = newLinks.findIndex((link) => link.id === id);
+    if (index !== -1) {
+      newLinks.splice(index, 1);
+      onChange({ ...data, links: newLinks });
+    }
   };
 
   const addLink = () => {
@@ -117,7 +120,7 @@ export function PersonalInfoSection({
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => removeLink(index)}
+              onClick={() => removeLink(link.id)}
               className="h-9 w-9"
             >
               <Trash2 className="h-4 w-4" />
