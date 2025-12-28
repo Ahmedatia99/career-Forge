@@ -1,7 +1,6 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/lib/auth-context';
-import Link from 'next/link';
+import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import Image from "next/image";
 
 export function Hero() {
 	const { user } = useAuth();
@@ -17,25 +16,17 @@ export function Hero() {
 						Upload your old CV, generate new sections, and export instantly. Let AI handle the heavy lifting.
 					</p>
 
-					<div className='flex gap-4 flex-wrap'>
-						<Button asChild size='lg' className='px-8 border-primary rounded-full'>
-							<Link href={user ? '/dashboard' : '/login'}>{user ? 'My Dashboard' : 'Create CV'}</Link>
-						</Button>
-						<Button
-							asChild
-							size='lg'
-							variant='outline'
-							className='px-12 bg-transparent border-primary text-primary rounded-full'>
-							<Link href={user ? `/cv-builder/${user.id}` : '/login'}>{user ? 'Upload CV' : 'Login'}</Link>
-						</Button>
-					</div>
-				</div>
-
-				<div className='relative'>
-					{/* add shadow to the image */}
-					<img src='cvTemplate.png' className='shadow-2xl rounded-lg border-2 border-border' alt='Hero' />
-				</div>
-			</div>
-		</section>
-	);
+        <div className="relative">
+          {/* add shadow to the image */}
+          <Image
+            width={500}
+            height={500}
+            src="cvTemplate.png"
+            className="shadow-2xl rounded-lg border-2 border-border"
+            alt="Hero"
+          />
+        </div>
+      </div>
+    </section>
+  );
 }
