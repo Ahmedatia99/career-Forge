@@ -5,7 +5,6 @@ interface MinimalTemplateProps {
 }
 
 function PersonalData({ data }: MinimalTemplateProps) {
-  console.log(data.personalInfo.links);
   return (
     <div className="mb-4 flex flex-col items-center pb-2 font-bold">
       <h1 className="text-3xl font-bold">

@@ -1,13 +1,13 @@
 import type { CV } from "@/types/types";
 import { Mail, Phone, MapPin, LinkIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/utils/formDate";
+import { formatDate } from "@/utils/formatDate";
 interface ModernTemplateProps {
   data: CV;
 }
 
 export function ModernTemplate({ data }: ModernTemplateProps) {
-  const formatDate = formatDate(data);
+  formatDate(data);
 
   return (
     <div className="mx-auto max-w-[1400px] bg-white text-gray-900 shadow-lg">
@@ -45,22 +45,24 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
           </div>
 
           {/* Skills */}
-          {data.skills.length > 0 && (
-            <div className="mb-10">
-              <h2 className="mb-4 text-xs font-bold uppercase tracking-wider">
+          {data.skills?.length > 0 && (
+            <section className="mb-4">
+              <h2 className="text-xl font-semibold uppercase border-b border-gray-300 pb-1 mb-2">
                 Skills
               </h2>
-              <div className="flex flex-wrap gap-2">
-                {data.skills.map((skill, index) => (
-                  <Badge
-                    key={index}
-                    className="bg-white text-black h-auto px-2 py-1 text-xs"
+
+              <div className="space-y-1 text-sm">
+                {data.skills.map((group, idx) => (
+                  <div
+                    key={group.id || `skill-group-${idx}`}
+                    className="text-gray-800"
                   >
-                    {skill}
-                  </Badge>
+                    <span className="font-semibold">{group.category}:</span>{" "}
+                    {(group.skills ?? []).join(", ")}
+                  </div>
                 ))}
               </div>
-            </div>
+            </section>
           )}
 
           {/* Languages */}
@@ -214,7 +216,7 @@ export function ModernTemplate({ data }: ModernTemplateProps) {
                         <p className="text-sm italic">{cert.company}</p>
                       </div>
                       <p className="text-sm text-gray-600">
-                        {formatDate(cert.startDate)} {" "}
+                        {formatDate(cert.startDate)}{" "}
                       </p>
                     </div>
                     {cert.description && (

@@ -14,7 +14,7 @@ interface MinimalTemplateProps {
 
 export function MinimalTemplate({ data }: MinimalTemplateProps) {
   return (
-    <div className="mx-auto max-w-3xl bg-white p-8 font-sans text-[15px] leading-snug text-gray-900">
+    <div className="mx-auto max-w-3xl bg-white p-8 font-serif  text-[15px] leading-snug text-gray-900">
       {/* Header - Personal Data */}
       <PersonalData data={data} />
 
