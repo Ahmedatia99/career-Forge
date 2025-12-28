@@ -16,6 +16,7 @@ export interface UserLink {
 export interface UserProfile {
   firstName: string
   lastName: string
+  headline: string
   email: string
   phone: string
   country: string
