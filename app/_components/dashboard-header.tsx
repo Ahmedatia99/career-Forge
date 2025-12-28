@@ -32,13 +32,13 @@ export function DashboardHeader() {
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="/features"
+            href="/#features"
             className="text-sm font-medium hover:text-primary transition"
           >
             Features
           </Link>
           <Link
-            href="/pricing"
+            href="/#pricing"
             className="text-sm font-medium hover:text-primary transition"
           >
             Pricing
