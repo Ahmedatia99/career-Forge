@@ -12,7 +12,7 @@ function Education({ data }: MinimalTemplateProps) {
     <>
       {data.education.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-xl font-semibold uppercase border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-base font-semibold border-b border-gray-300 pb-1 mb-2">
             Education
           </h2>
           <div className="space-y-3">
@@ -20,18 +20,20 @@ function Education({ data }: MinimalTemplateProps) {
               <div key={edu.id}>
                 <div className="flex justify-between items-start">
                   <div>
-                    <h3 className="font-semibold">{edu.degree}</h3>
-                    <p className="text-sm italic">{edu.institution}</p>
+                    <p className="font-bold">{edu.institution}</p>
+                    <h3 className="font-semibold text-sm">( {edu.degree} )</h3>
                   </div>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm font-bold tracking-tighter text-black">
                     {formatDate(edu.startDate)} –{" "}
                     {edu.current ? "Present" : formatDate(edu.endDate)}
                   </p>
                 </div>
                 {edu.description && (
-                  <p className="mt-1 text-sm text-gray-800">
-                    {edu.description}
-                  </p>
+                  <ul className="mt-1 list-disc list-outside text-sm text-black pl-3.5">
+                    {edu.description.split("\n").map((line, idx) => (
+                      <li key={idx}>{line}</li>
+                    ))}
+                  </ul>
                 )}
               </div>
             ))}
