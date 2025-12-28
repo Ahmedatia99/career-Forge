@@ -7,11 +7,11 @@ function Summery({ data }: MinimalTemplateProps) {
   return (
     <>
       {data.professionalSummary && (
-        <section className="mb-4">
-          <h2 className="text-xl font-semibold uppercase border-b border-gray-300 pb-1 mb-2">
+        <section className="mb-2">
+          <h2 className="text-base font-semibold border-b border-gray-300 pb-1 mb-2">
             Professional Summary
           </h2>
-          <p className="text-sm text-gray-800">{data.professionalSummary}</p>
+          <p className="text-sm text-black">{data.professionalSummary}</p>
         </section>
       )}
     </>

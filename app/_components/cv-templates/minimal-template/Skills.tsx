@@ -8,7 +8,7 @@ function Skills({ data }: MinimalTemplateProps) {
     <>
       {data.skills?.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-xl font-semibold uppercase border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-base font-semibold border-b border-gray-300 pb-1 mb-2">
             Skills
           </h2>
 
@@ -16,9 +16,11 @@ function Skills({ data }: MinimalTemplateProps) {
             {data.skills.map((group, idx) => (
               <div
                 key={group.id || `skill-group-${idx}`}
-                className="text-gray-800"
+                className="text-black capitalize"
               >
-                <span className="font-semibold">{group.category}:</span>{" "}
+                <span className="font-semibold text-base capitalize">
+                  {group.category}:
+                </span>{" "}
                 {(group.skills ?? []).join(", ")}
               </div>
             ))}

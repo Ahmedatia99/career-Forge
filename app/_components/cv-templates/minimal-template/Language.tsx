@@ -7,12 +7,12 @@ function Language({ data }: MinimalTemplateProps) {
     <>
       {data.languages.length > 0 && (
         <section>
-          <h2 className="text-xl font-semibold uppercase border-b border-gray-300 pb-1 mb-1">
+          <h2 className="text-base font-semibold  border-b border-gray-300 pb-1 mb-1">
             Languages
           </h2>
           <div className="grid grid-cols-2 gap-2 text-sm">
             {data.languages.map((lang) => (
-              <span key={lang.id} className="text-gray-800">
+              <span key={lang.id} className="text-black">
                 {lang.name} ({lang.proficiency})
               </span>
             ))}

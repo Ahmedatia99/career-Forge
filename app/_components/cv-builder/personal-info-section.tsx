@@ -68,15 +68,26 @@ export function PersonalInfoSection({
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          value={data?.email ?? ""}
-          onChange={(e) => handleChange("email", e.target.value)}
-          placeholder="atia.ahmed@example.com"
-        />
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="firstName">Headline</Label>
+          <Input
+            id="firstName"
+            value={data?.headline ?? ""}
+            onChange={(e) => handleChange("headline", e.target.value)}
+            placeholder="Ahmed"
+          />
+        </div>
+        <div>
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={data?.email ?? ""}
+            onChange={(e) => handleChange("email", e.target.value)}
+            placeholder="atia.ahmed@example.com"
+          />
+        </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
