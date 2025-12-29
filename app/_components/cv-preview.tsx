@@ -1,34 +1,96 @@
-"use client"
+"use client";
 
-import type { CV } from "@/lib/types"
-import { ProfessionalTemplate } from "./cv-templates/professional-template"
-import { ModernTemplate } from "./cv-templates/modern-template"
-import { MinimalTemplate } from "./cv-templates/minimal-template"
-import { Button } from "@/components/ui/button"
-import { Download } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Label } from "@/components/ui/label"
+import { useState } from "react";
+import type { CV } from "@/lib/types";
+import { ProfessionalTemplate } from "./cv-templates/professional-template";
+import { ModernTemplate } from "./cv-templates/modern-template";
+import { MinimalTemplate } from "./cv-templates/minimal-template";
+import { Button } from "@/components/ui/button";
+import { Download, Loader2 } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
+import { toast } from "sonner";
 
 interface CVPreviewProps {
-  data: CV
-  onTemplateChange: (template: string) => void
+  data: CV;
+  onTemplateChange: (template: string) => void;
 }
 
 export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
-  const handleExport = () => {
-    alert("Export to PDF functionality would be implemented here using a library like jsPDF or Puppeteer")
-  }
+  const [isExporting, setIsExporting] = useState(false);
+
+  const handleExport = async () => {
+    setIsExporting(true);
+
+    try {
+      // Call the API endpoint to generate PDF
+      const response = await fetch("/api/export-pdf", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cvData: data,
+          options: {
+            format: "A4",
+            margin: {
+              top: "0.5in",
+              right: "0.5in",
+              bottom: "0.5in",
+              left: "0.5in",
+            },
+            printBackground: true,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || "Failed to generate PDF");
+      }
+
+      // Get the PDF blob
+      const blob = await response.blob();
+
+      // Create download link
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `${data.title || "CV"}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      toast.success("PDF exported successfully!");
+    } catch (error) {
+      console.error("Export error:", error);
+      toast.error(
+        error instanceof Error
+          ? `Failed to export PDF: ${error.message}`
+          : "Failed to export PDF. Please try again."
+      );
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const renderTemplate = () => {
     switch (data.template) {
       case "Modern":
-        return <ModernTemplate data={data} />
+        return <ModernTemplate data={data} />;
       case "Minimal":
-        return <MinimalTemplate data={data} />
+        return <MinimalTemplate data={data} />;
       default:
-        return <ProfessionalTemplate data={data} />
+        return <ProfessionalTemplate data={data} />;
     }
-  }
+  };
 
   return (
     <div className="space-y-4">
@@ -46,9 +108,22 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
             </SelectContent>
           </Select>
         </div>
-        <Button onClick={handleExport} className="mt-8 gap-2">
-          <Download className="h-4 w-4" />
-          Export PDF
+        <Button
+          onClick={handleExport}
+          disabled={isExporting}
+          className="mt-8 gap-2"
+        >
+          {isExporting ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+              Exporting...
+            </>
+          ) : (
+            <>
+              <Download className="h-4 w-4" />
+              Export PDF
+            </>
+          )}
         </Button>
       </div>
 
@@ -56,5 +131,5 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
         <div className="max-h-[800px] overflow-y-auto">{renderTemplate()}</div>
       </div>
     </div>
-  )
+  );
 }

@@ -11,6 +11,7 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { Toaster } from "@/components/ui/sonner";
 // Testing Fonts
 const _geist = Geist({
   subsets: ["latin"],
@@ -63,6 +64,7 @@ export default function RootLayout({
       >
         {/* <Navbar01 /> */}
         <AuthProvider>{children}</AuthProvider>
+        <Toaster />
       </body>
     </html>
   );
