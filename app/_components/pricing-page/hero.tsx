@@ -6,11 +6,11 @@ import { HelpCircle } from "lucide-react";
 export default function HeroSection() {
   return (
     
-      <section className="py-16 px-4 sm:px-6">
+      <section className="bg-white py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-6xl">
           {/* Badge */}
           <div className="mb-8 flex justify-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 shadow-sm">
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 shadow-sm">
               <div className="h-2 w-2 rounded-full bg-blue-600"></div>
               <span className="text-sm font-medium text-gray-700">
                 100% Free for Job Seekers

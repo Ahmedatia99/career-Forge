@@ -1,7 +1,7 @@
 export default function StatsSection() {
   return (
     
-      <section className="bg-white py-16 px-4 sm:px-6">
+      <section className="bg-gray-50 py-16 px-4 sm:px-6">
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 sm:grid-cols-3">
             <div className="text-center">
