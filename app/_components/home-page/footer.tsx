@@ -51,12 +51,12 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Product</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-primary transition">
+                <a href="/#features" className="hover:text-primary transition">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition">
+                <a href="/#pricing" className="hover:text-primary transition">
                   Pricing
                 </a>
               </li>
@@ -105,12 +105,12 @@ export function Footer() {
             <h3 className="font-semibold text-foreground">Company</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li>
-                <a href="#" className="hover:text-primary transition">
+                <a href="/about" className="hover:text-primary transition">
                   About
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-primary transition">
+                <a href="/contact" className="hover:text-primary transition">
                   Contact
                 </a>
               </li>
