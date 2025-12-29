@@ -62,7 +62,7 @@ export default function FAQSection() {
 
           <AccordionItem
             value="item-4"
-            className="rounded-lg border border-gray-200 bg-white px-6"
+            className="last:border-b rounded-lg border border-gray-200 bg-white px-6"
           >
             <AccordionTrigger className="text-gray-900 hover:text-gray-700">
               Is my data secure?
