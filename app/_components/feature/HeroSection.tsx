@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export function HeroSection() {
 	return (
@@ -15,15 +16,17 @@ export function HeroSection() {
 					</p>
 					<div className='flex flex-wrap gap-4 pt-4'>
 						<Button
+							asChild
 							size='lg'
 							className='bg-[#0066cc] hover:bg-[#0052a3] text-white px-8 font-semibold rounded-md w-full lg:w-auto'>
-							Start Free Optimization
+							<Link href={'/signup'}>Start Free Optimization</Link>
 						</Button>
 						<Button
+							asChild
 							size='lg'
 							variant='outline'
 							className='border-slate-200 text-slate-900 px-8 font-semibold rounded-md bg-transparent w-full lg:w-auto'>
-							View Pricing
+							<Link href={'/pricing'}>View Pricing</Link>
 						</Button>
 					</div>
 				</div>
