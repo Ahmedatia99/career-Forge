@@ -16,7 +16,7 @@ function Certification({ data }: MinimalTemplateProps) {
           </h2>
 
           <div className="space-y-4 capitalize">
-            {data.certifications.map((cert) => (
+            {(data.certifications ?? []).map((cert) => (
               <div key={cert.id}>
                 <div className="flex justify-between text-sm font-medium">
                   <div className=" flex">
