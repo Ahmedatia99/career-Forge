@@ -1,5 +1,10 @@
-import puppeteer from "puppeteer";
+import { launchBrowser } from "@/lib/puppeteer";
+
+
 import type { CV } from "@/types/types";
+import type { Browser } from "puppeteer-core";
+
+
 
 export interface PDFExportOptions {
   format?: "A4" | "Letter";
@@ -18,13 +23,14 @@ export interface PDFServiceConfig {
   timeout?: number;
 }
 
+
 /**
  * PDF Service for exporting CVs to PDF format
  * Handles browser initialization, HTML rendering, and PDF generation
  */
 export class PDFService {
   private config: PDFServiceConfig;
-  private browser: Awaited<ReturnType<typeof puppeteer.launch>> | null = null;
+  private browser: Browser | null = null;
 
   constructor(config: PDFServiceConfig = {}) {
     this.config = {
@@ -49,23 +55,12 @@ export class PDFService {
    * Initialize Puppeteer browser instance
    * Reuses existing browser if available
    */
-  private async getBrowser() {
-    if (!this.browser) {
-      this.browser = await puppeteer.launch({
-        headless: true,
-        args: [
-          "--no-sandbox",
-          "--disable-setuid-sandbox",
-          "--disable-dev-shm-usage",
-          "--disable-accelerated-2d-canvas",
-          "--no-first-run",
-          "--no-zygote",
-          "--disable-gpu",
-        ],
-      });
-    }
-    return this.browser;
+private async getBrowser() {
+  if (!this.browser) {
+    this.browser = await launchBrowser() as Browser;
   }
+  return this.browser;
+}
 
 
   /**
@@ -76,6 +71,9 @@ export class PDFService {
    */
   async generatePDF(cvData: CV, options?: PDFExportOptions): Promise<Buffer> {
     const browser = await this.getBrowser();
+    if (!browser) {
+      throw new Error("Failed to launch browser");
+    }
     const page = await browser.newPage();
 
     try {
@@ -90,7 +88,14 @@ export class PDFService {
       // Get the base URL - in production this should be your actual domain
       // For development, use localhost
       const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-      const renderUrl = `${baseUrl}/pdf-render?data=${encodedData}`;
+const renderUrl = `${baseUrl}/pdf-render?data=${encodedData}`;
+
+      // Set viewport to desktop size to ensure responsive breakpoints work correctly
+      await page.setViewport({
+        width: 1920,
+        height: 1080,
+        deviceScaleFactor: 1,
+      });
 
       // Navigate to the render page and wait for it to load
       await page.goto(renderUrl, {
