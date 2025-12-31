@@ -15,7 +15,7 @@ export default function PDFRenderPage() {
     // Get data from URL query parameter
     const params = new URLSearchParams(window.location.search);
     const dataParam = params.get("data");
-    
+
     if (dataParam) {
       try {
         const decoded = JSON.parse(decodeURIComponent(dataParam));
@@ -46,9 +46,16 @@ export default function PDFRenderPage() {
   };
 
   return (
-    <div className="bg-white" style={{ minHeight: "100vh", width: "100%" }}>
-      {renderTemplate()}
+    <div
+      className="pdf-mode bg-white"
+      style={{ minHeight: "100vh", width: "100%" }}
+    >
+      <div
+        className="pdf-container"
+        style={{ maxWidth: "210mm", margin: "0 auto" }}
+      >
+        {renderTemplate()}
+      </div>
     </div>
   );
 }
-

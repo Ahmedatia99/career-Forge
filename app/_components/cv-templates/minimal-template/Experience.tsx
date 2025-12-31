@@ -9,29 +9,35 @@ function Experience({ data }: MinimalTemplateProps) {
   formatDate(data);
   return (
     <>
-      {data.workExperience.length > 0 && (
+      {data.workExperience && data.workExperience.length > 0 && (
         <section className="mb-4">
-          <h2 className="text-base font-semibold border-b border-gray-300 pb-1 mb-2">
+          <h2 className="text-sm font-semibold border-b border-gray-300 pb-1 mb-3 sm:text-base sm:mb-2">
             Experience
           </h2>
-          <div className="space-y-3">
-            {data.workExperience.map((exp) => (
-              <div key={exp.id}>
-                <div className="flex justify-between items-start">
-                  <div className="flex items-center font-semibold">
-                    <h3>{exp.title}</h3>
-                    <Minus />
-                    <p className="italic">{exp.company}</p>
+          <div className="space-y-4 sm:space-y-3">
+            {data.workExperience?.map((exp) => (
+              <div key={exp.id} className="space-y-1.5">
+                <div className="flex flex-col gap-1 sm:flex-row sm:justify-between sm:items-start">
+                  <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:font-semibold">
+                    <h3 className="text-sm font-semibold sm:text-base">
+                      {exp.title}
+                    </h3>
+                    <Minus className="hidden sm:block h-4 w-4" />
+                    <p className="text-xs italic text-gray-700 sm:text-sm sm:text-black">
+                      {exp.company}
+                    </p>
                   </div>
-                  <p className="text-sm font-bold tracking-tighter text-black">
+                  <p className="text-xs font-bold tracking-tighter text-black sm:text-sm">
                     {formatDate(exp.startDate)} –{" "}
                     {exp.current ? "Present" : formatDate(exp.endDate)}
                   </p>
                 </div>
                 {exp.description && (
-                  <ul className="mt-1 list-disc list-outside text-sm text-black pl-3.5">
+                  <ul className="mt-1.5 list-disc list-outside text-xs text-black pl-4 space-y-0.5 sm:pl-3.5 sm:text-sm">
                     {exp.description.split("\n").map((line, idx) => (
-                      <li key={idx}>{line}</li>
+                      <li key={idx} className="leading-relaxed">
+                        {line}
+                      </li>
                     ))}
                   </ul>
                 )}

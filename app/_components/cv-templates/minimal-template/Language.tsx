@@ -5,7 +5,7 @@ interface MinimalTemplateProps {
 function Language({ data }: MinimalTemplateProps) {
   return (
     <>
-      {data.languages.length > 0 && (
+      {data.languages && data.languages.length > 0 && (
         <section>
           <h2 className="text-base font-semibold  border-b border-gray-300 pb-1 mb-1">
             Languages

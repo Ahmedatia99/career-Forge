@@ -39,6 +39,7 @@ export default function CVBuilderPage() {
     personalInfo: {
       firstName: "",
       lastName: "",
+      headline: "",
       email: "",
       phone: "",
       country: "",
@@ -82,10 +83,13 @@ export default function CVBuilderPage() {
         setCvData((prev: CV) => ({
           ...prev,
           personalInfo: {
-            ...prev.personalInfo,
             firstName: user.firstName,
             lastName: user.lastName,
+            headline: prev.personalInfo?.headline ?? "",
             email: user.email,
+            phone: prev.personalInfo?.phone ?? "",
+            country: prev.personalInfo?.country ?? "",
+            links: prev.personalInfo?.links ?? [],
           },
         }));
       }
@@ -131,25 +135,29 @@ export default function CVBuilderPage() {
   return (
     <div className="min-h-screen bg-background">
       <DashboardHeader />
-      <div className="container mx-auto px-4 py-8">
-        <div className="mb-6 flex items-center justify-between">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
+        <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
           <Button
             variant="ghost"
             onClick={() => router.push("/dashboard")}
-            className="gap-2"
+            className="gap-2 w-full sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
           </Button>
-          <Button onClick={handleSave} disabled={isSaving} className="gap-2">
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="gap-2 w-full sm:w-auto"
+          >
             <Save className="h-4 w-4" />
             {isSaving ? "Saving..." : "Save CV"}
           </Button>
         </div>
 
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
           {/* Form Section */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
               <Label htmlFor="cvTitle">CV Title</Label>
               <Input
@@ -159,18 +167,18 @@ export default function CVBuilderPage() {
                   setCvData({ ...cvData, title: e.target.value })
                 }
                 placeholder="e.g., Software Engineer Resume"
-                className="text-lg font-medium"
+                className="text-base font-medium sm:text-lg"
               />
             </div>
 
             <Accordion
               type="multiple"
               defaultValue={["personal", "summary"]}
-              className="space-y-4"
+              className="space-y-3 sm:space-y-4"
             >
               <AccordionItem
                 value="personal"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
                   <span className="text-lg font-semibold">
@@ -189,16 +197,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="summary"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">
+                  <span className="text-base font-semibold sm:text-lg">
                     Professional Summary
                   </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <ProfessionalSummarySection
-                    data={cvData.professionalSummary}
+                    data={cvData.professionalSummary ?? ""}
                     onChange={(data) =>
                       setCvData({ ...cvData, professionalSummary: data })
                     }
@@ -208,14 +216,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="experience"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Work Experience</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Work Experience
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <WorkExperienceSection
-                    data={cvData.workExperience}
+                    data={cvData.workExperience ?? []}
                     onChange={(data) =>
                       setCvData({ ...cvData, workExperience: data })
                     }
@@ -225,14 +235,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="education"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Education</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Education
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <EducationSection
-                    data={cvData.education}
+                    data={cvData.education ?? []}
                     onChange={(data) =>
                       setCvData({ ...cvData, education: data })
                     }
@@ -242,14 +254,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="skills"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Skills</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Skills
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <SkillsSection
-                    data={cvData.skills}
+                    data={cvData.skills ?? []}
                     onChange={(data) => setCvData({ ...cvData, skills: data })}
                   />
                 </AccordionContent>
@@ -257,14 +271,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="projects"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Projects</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Projects
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <ProjectsSection
-                    data={cvData.projects}
+                    data={cvData.projects ?? []}
                     onChange={(data) =>
                       setCvData({ ...cvData, projects: data })
                     }
@@ -273,14 +289,16 @@ export default function CVBuilderPage() {
               </AccordionItem>
               <AccordionItem
                 value="certification"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Certification</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Certification
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <CertificationSection
-                    data={cvData.certifications}
+                    data={cvData.certifications ?? []}
                     onChange={(data) =>
                       setCvData({ ...cvData, certifications: data })
                     }
@@ -290,14 +308,16 @@ export default function CVBuilderPage() {
 
               <AccordionItem
                 value="languages"
-                className="rounded-lg border bg-card px-6"
+                className="rounded-lg border bg-card px-4 sm:px-6"
               >
                 <AccordionTrigger className="hover:no-underline">
-                  <span className="text-lg font-semibold">Languages</span>
+                  <span className="text-base font-semibold sm:text-lg">
+                    Languages
+                  </span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-6 pt-4">
+                <AccordionContent className="pb-4 pt-3 sm:pb-6 sm:pt-4">
                   <LanguagesSection
-                    data={cvData.languages}
+                    data={cvData.languages ?? []}
                     onChange={(data) =>
                       setCvData({ ...cvData, languages: data })
                     }
