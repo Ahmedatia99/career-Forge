@@ -94,7 +94,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4 rounded-lg border bg-card p-4">
+      <div className="flex flex-col gap-4 rounded-lg border bg-card p-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex-1 space-y-2">
           <Label htmlFor="template">Template</Label>
           <Select value={data.template} onValueChange={onTemplateChange}>
@@ -111,7 +111,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
         <Button
           onClick={handleExport}
           disabled={isExporting}
-          className="mt-8 gap-2"
+          className="gap-2 sm:mt-8"
         >
           {isExporting ? (
             <>
@@ -128,7 +128,9 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
       </div>
 
       <div className="overflow-hidden rounded-lg border shadow-xl">
-        <div className="max-h-[800px] overflow-y-auto">{renderTemplate()}</div>
+        <div className="max-h-[600px] overflow-y-auto sm:max-h-[800px]">
+          {renderTemplate()}
+        </div>
       </div>
     </div>
   );

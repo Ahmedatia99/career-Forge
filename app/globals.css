@@ -89,3 +89,120 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* PDF Mode - Disable responsive styles for PDF export */
+.pdf-mode {
+  /* Force fixed width for PDF */
+  width: 210mm !important;
+  max-width: 210mm !important;
+  min-width: 210mm !important;
+}
+
+.pdf-container {
+  width: 100%;
+  max-width: 210mm;
+  margin: 0 auto;
+}
+
+/* Override responsive classes in PDF mode - force desktop/large screen styles */
+.pdf-mode .sm\:px-8 {
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+.pdf-mode .sm\:py-8 {
+  padding-top: 2rem !important;
+  padding-bottom: 2rem !important;
+}
+
+.pdf-mode .sm\:text-3xl {
+  font-size: 1.875rem !important;
+  line-height: 2.25rem !important;
+}
+
+.pdf-mode .sm\:text-lg {
+  font-size: 1.125rem !important;
+  line-height: 1.75rem !important;
+}
+
+.pdf-mode .sm\:text-base {
+  font-size: 1rem !important;
+  line-height: 1.5rem !important;
+}
+
+.pdf-mode .sm\:text-sm {
+  font-size: 0.875rem !important;
+  line-height: 1.25rem !important;
+}
+
+.pdf-mode .sm\:px-4 {
+  padding-left: 1rem !important;
+  padding-right: 1rem !important;
+}
+
+.pdf-mode .sm\:py-6 {
+  padding-top: 1.5rem !important;
+  padding-bottom: 1.5rem !important;
+}
+
+.pdf-mode .sm\:p-8 {
+  padding: 2rem !important;
+}
+
+.pdf-mode .sm\:text-\[15px\] {
+  font-size: 15px !important;
+}
+
+/* Ensure templates maintain fixed layout in PDF mode */
+.pdf-mode .grid {
+  display: grid !important;
+}
+
+.pdf-mode .grid-cols-1 {
+  grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+}
+
+.pdf-mode .sm\:grid-cols-\[1fr_2\.2fr\] {
+  grid-template-columns: 1fr 2.2fr !important;
+}
+
+.pdf-mode .sm\:border-r {
+  border-right-width: 1px !important;
+}
+
+.pdf-mode .sm\:border-b-0 {
+  border-bottom-width: 0 !important;
+}
+
+.pdf-mode .sm\:pb-0 {
+  padding-bottom: 0 !important;
+}
+
+.pdf-mode .sm\:pr-4 {
+  padding-right: 1rem !important;
+}
+
+.pdf-mode .sm\:pl-4 {
+  padding-left: 1rem !important;
+}
+
+/* Print styles for PDF */
+@media print {
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    width: 210mm;
+    height: 297mm;
+  }
+
+  /* Ensure all responsive breakpoints use desktop styles in print */
+  @media (min-width: 640px) {
+    .sm\:px-8 {
+      padding-left: 2rem !important;
+      padding-right: 2rem !important;
+    }
+  }
+}
