@@ -1,15 +1,26 @@
-"use client"
+"use client";
 
-import type { CV } from "@/lib/types"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { FileText, MoreVertical, Trash2, Eye } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
+import type { CV } from "@/lib/types";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { FileText, MoreVertical, Trash2, Eye } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from "next/link";
 
 interface CVCardProps {
-  cv: CV
-  onDelete: (id: string) => void
+  cv: CV;
+  onDelete: (id: string) => void;
 }
 
 export function CVCard({ cv, onDelete }: CVCardProps) {
@@ -17,7 +28,7 @@ export function CVCard({ cv, onDelete }: CVCardProps) {
     month: "short",
     day: "numeric",
     year: "numeric",
-  })
+  });
 
   return (
     <Card className="group relative transition-shadow hover:shadow-lg">
@@ -45,7 +56,10 @@ export function CVCard({ cv, onDelete }: CVCardProps) {
                   Open
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onDelete(cv.id)} className="text-destructive">
+              <DropdownMenuItem
+                onClick={() => onDelete(cv.id)}
+                className="text-destructive"
+              >
                 <Trash2 className="mr-2 h-4 w-4" />
                 Delete
               </DropdownMenuItem>
@@ -57,7 +71,8 @@ export function CVCard({ cv, onDelete }: CVCardProps) {
         <div className="space-y-2 text-sm text-muted-foreground">
           <p>Template: {cv.template}</p>
           <p>
-            {cv.workExperience.length} work experience • {cv.education.length} education
+            {cv.workExperience?.length ?? 0} work experience •{" "}
+            {cv.education?.length ?? 0} education
           </p>
         </div>
         <Link href={`/cv-builder/${cv.id}`}>
@@ -65,5 +80,5 @@ export function CVCard({ cv, onDelete }: CVCardProps) {
         </Link>
       </CardContent>
     </Card>
-  )
+  );
 }

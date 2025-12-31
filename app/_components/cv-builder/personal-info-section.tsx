@@ -15,10 +15,12 @@ export function PersonalInfoSection({
   onChange,
 }: PersonalInfoSectionProps) {
   const handleChange = (field: keyof UserProfile, value: string) => {
+    if (!data) return;
     onChange({ ...data, [field]: value });
   };
 
   const updateLink = (id: string, field: "label" | "url", value: string) => {
+    if (!data) return;
     const newLinks = (data.links ?? []).map((link) =>
       link.id === id ? { ...link, [field]: value } : link
     );
@@ -26,6 +28,7 @@ export function PersonalInfoSection({
     onChange({ ...data, links: newLinks });
   };
   const removeLink = (id: string) => {
+    if (!data) return;
     const newLinks = [...(data.links ?? [])];
     const index = newLinks.findIndex((link) => link.id === id);
     if (index !== -1) {
@@ -35,6 +38,7 @@ export function PersonalInfoSection({
   };
 
   const addLink = () => {
+    if (!data) return;
     onChange({
       ...data,
       links: [
@@ -116,7 +120,7 @@ export function PersonalInfoSection({
       <div className="space-y-2">
         <Label>Links</Label>
 
-        {(data.links ?? []).map((link) => (
+        {(data?.links ?? []).map((link) => (
           <div key={link.id} className="grid grid-cols-[1fr_2fr_auto] gap-2">
             <Input
               placeholder="Label (GitHub, LinkedIn)"
