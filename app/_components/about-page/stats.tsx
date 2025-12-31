@@ -27,7 +27,7 @@ export function StatsSection() {
           {stats.map((stat) => (
             <Card
               key={stat.label}
-              className="flex flex-col items-center p-6 text-center"
+              className="flex flex-col items-center p-6 text-center hover:border-primary/50"
             >
               <stat.icon className="mb-4 h-6 w-6 text-blue-500" />
               <p className="text-3xl font-bold">{stat.value}</p>

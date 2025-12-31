@@ -42,7 +42,10 @@ export function ValuesSection() {
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {values.map((value) => (
-            <Card key={value.title} className="text-center">
+            <Card
+              key={value.title}
+              className="text-center hover:border-primary/50"
+            >
               <CardHeader>
                 <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">
                   <value.icon className="h-6 w-6 text-blue-500" />
