@@ -40,7 +40,7 @@ const _shareTech = Share_Tech({
   weight: ["400"],
 });
 export const metadata: Metadata = {
-  title: "CV Builder AI - Create Your CV in Minutes",
+  title: "CV Builder AI",
   description:
     "Create professional CVs in minutes with AI. Upload your old CV, generate new sections, and export instantly.",
 };

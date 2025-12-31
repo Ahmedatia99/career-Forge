@@ -20,7 +20,7 @@ export function DashboardHeader() {
 	const initials = user ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase() : 'U';
 
   return (
-    <header className="relative z-10 border-b bg-card shadow-xl">
+    <header className="relative z-10 border-b bg-card shadow-xs">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link href={"/"} className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
@@ -30,7 +30,7 @@ export function DashboardHeader() {
         </Link>
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="/features"
+            href="/feature"
             className="text-sm font-medium hover:text-primary transition"
           >
             Features
