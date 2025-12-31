@@ -9,6 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FileText } from 'lucide-react';
 import { useState } from 'react';
+import { Footer } from '../_components/home-page/footer';
 function page() {
 	const [form, setForm] = useState({
 		fullName: '',
@@ -88,11 +89,12 @@ function page() {
 									</SelectTrigger>
 									<SelectContent>
 										<SelectGroup>
-											<SelectItem value='apple'>Apple</SelectItem>
-											<SelectItem value='banana'>Banana</SelectItem>
-											<SelectItem value='blueberry'>Blueberry</SelectItem>
-											<SelectItem value='grapes'>Grapes</SelectItem>
-											<SelectItem value='pineapple'>Pineapple</SelectItem>
+											<SelectItem value='guidance'>Career Guidance & Job Matching</SelectItem>
+											<SelectItem value='ATS'>ATS Compatibility Issues</SelectItem>
+											<SelectItem value='format'>Formatting & Design Issues</SelectItem>
+											<SelectItem value='pricing'>Pricing & Plans Inquiry</SelectItem>
+											<SelectItem value='account'>Account & Login Issues</SelectItem>
+											<SelectItem value='feedback'>Feedback & Suggestions</SelectItem>
 										</SelectGroup>
 									</SelectContent>
 								</Select>
@@ -183,18 +185,8 @@ function page() {
 					</div>
 				</div>
 			</div>
-
 			{/* Footer - responsive layout */}
-			<div className='bg-white mt-5 p-4 md:p-8 flex flex-col md:flex-row items-center justify-between gap-4'>
-				<div className='flex items-center gap-2 justify-center rounded-lg'>
-					<FileText className='h-4 md:h-5 w-4 md:w-5 text-black' />
-					<p className='text-xs md:text-sm'>&copy; 2026 CareerForge. All rights reserved.</p>
-				</div>
-				<div className='flex items-center gap-3 md:gap-4 justify-center rounded-lg'>
-					<p className='text-xs md:text-sm'>Privacy Policy</p>
-					<p className='text-xs md:text-sm'>Terms of Service</p>
-				</div>
-			</div>
+			<Footer />
 		</>
 	);
 }
