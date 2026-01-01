@@ -138,7 +138,6 @@ export default function CVBuilderPage() {
       <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
           <Button
-            variant="ghost"
             onClick={() => router.push("/dashboard")}
             className="gap-2 w-full sm:w-auto"
           >
@@ -159,7 +158,9 @@ export default function CVBuilderPage() {
           {/* Form Section */}
           <div className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="cvTitle">CV Title</Label>
+              <Label htmlFor="cvTitle" className="text-base">
+                CV Title
+              </Label>
               <Input
                 id="cvTitle"
                 value={cvData.title}
@@ -167,7 +168,7 @@ export default function CVBuilderPage() {
                   setCvData({ ...cvData, title: e.target.value })
                 }
                 placeholder="e.g., Software Engineer Resume"
-                className="text-base font-medium sm:text-lg"
+                className="text-base font-medium sm:text-lg border border-accent"
               />
             </div>
 

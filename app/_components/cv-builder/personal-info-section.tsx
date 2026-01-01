@@ -136,9 +136,9 @@ export function PersonalInfoSection({
               variant="ghost"
               size="icon"
               onClick={() => removeLink(link.id)}
-              className="h-9 w-9"
+              className="h-9 w-9 hover:bg-red-500"
             >
-              <Trash2 className="h-4 w-4" />
+              <Trash2 className="h-4 w-4 " />
             </Button>
           </div>
         ))}

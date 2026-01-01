@@ -99,7 +99,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
           <Label htmlFor="template">Template</Label>
           <Select value={data.template} onValueChange={onTemplateChange}>
             <SelectTrigger id="template">
-              <SelectValue />
+              <SelectValue> {data.template ?? "Select a template"}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="Professional">Professional</SelectItem>

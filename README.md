@@ -1,36 +1,173 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📄 CV Builder & PDF Exporter
 
-## Getting Started
+A modern CV (Resume) builder built with **Next.js** that allows users to create professional resumes and export them as **high-quality PDFs** using **Puppeteer**.
+The project is optimized to work both **locally** and in **production on Vercel** using `puppeteer-core` and `@sparticuz/chromium-min`.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+* 🧑‍💼 Build professional CVs with structured sections
+* 🎨 Clean and customizable templates
+* 📱 Responsive UI for editing
+* 🖨️ Export CVs as **A4 PDF**
+* ⚡ Fast rendering using server-side PDF generation
+* ☁️ Production-ready for **Vercel**
+* ♻️ Reusable PDF service with browser pooling
+
+---
+
+## 🧱 Tech Stack
+
+* **Next.js** (App Router)
+* **TypeScript**
+* **Tailwind CSS**
+* **Puppeteer**
+* **puppeteer-core**
+* **@sparticuz/chromium-min** (for Vercel compatibility)
+
+---
+
+## 📂 Project Structure
+
+```bash
+src/
+├── app/
+│   ├── api/
+│   │   └── export-pdf/        # API route for PDF generation
+│   ├── pdf-render/            # Hidden page used for PDF rendering
+│   └── page.tsx               # Main UI
+│
+├── components/
+│   ├── templates/             # CV templates
+│   └── sections/              # CV sections (skills, experience, etc.)
+│
+├── lib/
+│   ├── puppeteer.ts           # Browser launcher (dev / prod)
+│   └── pdf-service.ts         # PDF generation service
+│
+├── types/
+│   └── types.ts               # CV & payload types
+│
+└── styles/
+```
+
+---
+
+## 🧠 How PDF Generation Works
+
+1. User builds the CV in the UI
+2. CV data is sent to an API route
+3. Puppeteer opens a hidden `/pdf-render` page
+4. The page is rendered with the selected template
+5. Puppeteer exports the page as a **PDF**
+6. The PDF is returned to the user for download
+
+---
+
+## 🧪 Development Setup
+
+### 1️⃣ Install dependencies
+
+```bash
+npm install
+```
+
+### 2️⃣ Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+App will be available at:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🌍 Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` file:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```env
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+In **production (Vercel)**, set:
 
-## Deploy on Vercel
+```env
+NEXT_PUBLIC_BASE_URL=https://your-domain.vercel.app
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ☁️ Production & Vercel Notes
+
+This project uses:
+
+* `puppeteer` → **local development**
+* `puppeteer-core + @sparticuz/chromium-min` → **production**
+
+Why?
+
+* Vercel has a **250MB function size limit**
+* Full Puppeteer + Chrome exceeds this limit
+* `chromium-min` provides a lightweight compatible binary
+
+---
+
+## ⚠️ Common Issues
+
+### ❌ `Could not find Chrome`
+
+✔ Make sure:
+
+* `puppeteer-core` is used in production
+* `@sparticuz/chromium-min` is installed
+* `NODE_ENV=production` on Vercel
+
+---
+
+## 📈 Future Improvements
+
+* ✨ Multiple CV templates
+* 🎨 Template customization (colors, fonts)
+* 📊 Export analytics
+* 🔐 Auth & saved CVs
+
+---
+
+## 🤝 Contribution
+
+Contributions are welcome!
+
+1. Fork the repo
+2. Create a feature branch
+3. Commit changes
+4. Open a Pull Request
+
+---
+
+## 🧑‍💻 Author
+
+**Ahmed Atia**
+Frontend Developer
+Specialized in **React, Next.js & Modern Web UI**
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+لو حابب:
+
+* نسخة **أقصر**
+* أو README موجه للـ **HR / Client**
+* أو إضافة **screenshots / diagrams**
+
+قولي وأنا أظبطهولك 👌
