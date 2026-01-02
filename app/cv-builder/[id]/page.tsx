@@ -136,11 +136,10 @@ export default function CVBuilderPage() {
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <div className="container mx-auto px-4 py-4 sm:py-8">
-        <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mb-4 flex flex-row gap-3 sm:mb-6 justify-between max-sm:flex-col">
           <Button
-            variant="ghost"
             onClick={() => router.push("/dashboard")}
-            className="gap-2 w-full sm:w-auto"
+            className="gap-2 sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
             Back to Dashboard
@@ -148,7 +147,7 @@ export default function CVBuilderPage() {
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="gap-2 w-full sm:w-auto"
+            className="gap-2  sm:w-auto"
           >
             <Save className="h-4 w-4" />
             {isSaving ? "Saving..." : "Save CV"}
@@ -159,7 +158,9 @@ export default function CVBuilderPage() {
           {/* Form Section */}
           <div className="space-y-4 sm:space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="cvTitle">CV Title</Label>
+              <Label htmlFor="cvTitle" className="text-base">
+                CV Title
+              </Label>
               <Input
                 id="cvTitle"
                 value={cvData.title}
@@ -167,7 +168,7 @@ export default function CVBuilderPage() {
                   setCvData({ ...cvData, title: e.target.value })
                 }
                 placeholder="e.g., Software Engineer Resume"
-                className="text-base font-medium sm:text-lg"
+                className="text-base font-medium sm:text-lg border border-accent"
               />
             </div>
 

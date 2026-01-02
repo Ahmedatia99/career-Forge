@@ -38,8 +38,8 @@ export function LanguagesSection({ data, onChange }: LanguagesSectionProps) {
           <CardContent className="pt-6">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="font-medium">Language {index + 1}</h4>
-              <Button variant="ghost" size="icon" onClick={() => removeLanguage(language.id)} className="h-8 w-8">
-                <Trash2 className="h-4 w-4 text-destructive" />
+              <Button variant="ghost" size="icon" onClick={() => removeLanguage(language.id)} className="h-8 w-8 hover:bg-red-500">
+                <Trash2 className="h-4 w-4 " />
               </Button>
             </div>
             <div className="grid gap-4 md:grid-cols-2">

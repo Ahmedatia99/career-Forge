@@ -60,7 +60,7 @@ export function CVCard({ cv, onDelete }: CVCardProps) {
                 onClick={() => onDelete(cv.id)}
                 className="text-destructive"
               >
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-2 h-4 w-4 hover:bg-red-500" />
                 Delete
               </DropdownMenuItem>
             </DropdownMenuContent>

@@ -40,8 +40,8 @@ export function ProjectsSection({ data, onChange }: ProjectsSectionProps) {
           <CardContent className="pt-6">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="font-medium">Project {index + 1}</h4>
-              <Button variant="ghost" size="icon" onClick={() => removeProject(project.id)} className="h-8 w-8">
-                <Trash2 className="h-4 w-4 text-destructive" />
+              <Button variant="ghost" size="icon" onClick={() => removeProject(project.id)} className="h-8 w-8 hover:bg-red-500">
+                <Trash2 className="h-4 w-4" />
               </Button>
             </div>
             <div className="space-y-4">

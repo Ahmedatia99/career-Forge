@@ -3,7 +3,6 @@ interface MinimalTemplateProps {
   data: CV;
 }
 function Skills({ data }: MinimalTemplateProps) {
-  console.log(data.skills);
   return (
     <>
       {data.skills && data.skills.length > 0 && (
@@ -18,7 +17,7 @@ function Skills({ data }: MinimalTemplateProps) {
                 <span className="font-medium text-gray-900">
                   {group.category}
                 </span>
-                <p className="text-gray-600 leading-relaxed break-words">
+                <p className="text-gray-600 leading-relaxed wrap-break-word">
                   {(group.skills ?? []).join(", ")}
                 </p>
               </div>

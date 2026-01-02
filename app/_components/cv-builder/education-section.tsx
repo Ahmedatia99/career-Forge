@@ -1,17 +1,17 @@
-"use client"
+"use client";
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Plus, Trash2 } from "lucide-react"
-import type { Education } from "@/lib/types"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Plus, Trash2 } from "lucide-react";
+import type { Education } from "@/lib/types";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface EducationSectionProps {
-  data: Education[]
-  onChange: (data: Education[]) => void
+  data: Education[];
+  onChange: (data: Education[]) => void;
 }
 
 export function EducationSection({ data, onChange }: EducationSectionProps) {
@@ -25,17 +25,23 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
       endDate: "",
       current: false,
       description: "",
-    }
-    onChange([...data, newEducation])
-  }
+    };
+    onChange([...data, newEducation]);
+  };
 
-  const updateEducation = (id: string, field: keyof Education, value: string | boolean) => {
-    onChange(data.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu)))
-  }
+  const updateEducation = (
+    id: string,
+    field: keyof Education,
+    value: string | boolean
+  ) => {
+    onChange(
+      data.map((edu) => (edu.id === id ? { ...edu, [field]: value } : edu))
+    );
+  };
 
   const removeEducation = (id: string) => {
-    onChange(data.filter((edu) => edu.id !== id))
-  }
+    onChange(data.filter((edu) => edu.id !== id));
+  };
 
   return (
     <div className="space-y-4">
@@ -44,8 +50,13 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
           <CardContent className="pt-6">
             <div className="mb-4 flex items-center justify-between">
               <h4 className="font-medium">Education {index + 1}</h4>
-              <Button variant="ghost" size="icon" onClick={() => removeEducation(edu.id)} className="h-8 w-8">
-                <Trash2 className="h-4 w-4 text-destructive" />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => removeEducation(edu.id)}
+                className="h-8 w-8 hover:bg-red-500"
+              >
+                <Trash2 className="h-4 w-4 " />
               </Button>
             </div>
             <div className="space-y-4">
@@ -54,7 +65,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                   <Label>Degree</Label>
                   <Input
                     value={edu.degree}
-                    onChange={(e) => updateEducation(edu.id, "degree", e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(edu.id, "degree", e.target.value)
+                    }
                     placeholder="Bachelor of Science"
                   />
                 </div>
@@ -62,7 +75,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                   <Label>Institution</Label>
                   <Input
                     value={edu.institution}
-                    onChange={(e) => updateEducation(edu.id, "institution", e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(edu.id, "institution", e.target.value)
+                    }
                     placeholder="University Name"
                   />
                 </div>
@@ -71,7 +86,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                 <Label>Location</Label>
                 <Input
                   value={edu.location}
-                  onChange={(e) => updateEducation(edu.id, "location", e.target.value)}
+                  onChange={(e) =>
+                    updateEducation(edu.id, "location", e.target.value)
+                  }
                   placeholder="Boston, MA"
                 />
               </div>
@@ -81,7 +98,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                   <Input
                     type="month"
                     value={edu.startDate}
-                    onChange={(e) => updateEducation(edu.id, "startDate", e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(edu.id, "startDate", e.target.value)
+                    }
                   />
                 </div>
                 <div className="space-y-2">
@@ -89,7 +108,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                   <Input
                     type="month"
                     value={edu.endDate}
-                    onChange={(e) => updateEducation(edu.id, "endDate", e.target.value)}
+                    onChange={(e) =>
+                      updateEducation(edu.id, "endDate", e.target.value)
+                    }
                     disabled={edu.current}
                   />
                 </div>
@@ -98,9 +119,14 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                 <Checkbox
                   id={`current-edu-${edu.id}`}
                   checked={edu.current}
-                  onCheckedChange={(checked) => updateEducation(edu.id, "current", checked === true)}
+                  onCheckedChange={(checked) =>
+                    updateEducation(edu.id, "current", checked === true)
+                  }
                 />
-                <Label htmlFor={`current-edu-${edu.id}`} className="cursor-pointer font-normal">
+                <Label
+                  htmlFor={`current-edu-${edu.id}`}
+                  className="cursor-pointer font-normal"
+                >
                   Currently enrolled
                 </Label>
               </div>
@@ -108,7 +134,9 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
                 <Label>Description (Optional)</Label>
                 <Textarea
                   value={edu.description}
-                  onChange={(e) => updateEducation(edu.id, "description", e.target.value)}
+                  onChange={(e) =>
+                    updateEducation(edu.id, "description", e.target.value)
+                  }
                   placeholder="Relevant coursework, honors, achievements..."
                   rows={3}
                 />
@@ -117,10 +145,15 @@ export function EducationSection({ data, onChange }: EducationSectionProps) {
           </CardContent>
         </Card>
       ))}
-      <Button type="button" variant="outline" onClick={addEducation} className="w-full bg-transparent">
+      <Button
+        type="button"
+        variant="outline"
+        onClick={addEducation}
+        className="w-full bg-transparent"
+      >
         <Plus className="mr-2 h-4 w-4" />
         Add Education
       </Button>
     </div>
-  )
+  );
 }

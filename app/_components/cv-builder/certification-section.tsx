@@ -57,9 +57,9 @@ export function CertificationSection({
                 variant="ghost"
                 size="icon"
                 onClick={() => removeCertification(cert.id)}
-                className="h-8 w-8"
+                className="h-8 w-8 hover:bg-red-500 "
               >
-                <Trash2 className="h-4 w-4 text-destructive" />
+                <Trash2 className="h-4 w-4 " />
               </Button>
             </div>
             <div className="space-y-4">
