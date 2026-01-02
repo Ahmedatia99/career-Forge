@@ -40,35 +40,60 @@ export async function launchBrowser() {
     try {
       console.log("Attempting to use @sparticuz/chromium for serverless...");
       
-      // Use @sparticuz/chromium (full version with all libraries including libnss3.so)
-      const chromiumModule = await import("@sparticuz/chromium");
-      const chromium = chromiumModule.default || chromiumModule;
-      console.log("Using @sparticuz/chromium (full version with all libraries)");
+      // Try chromium-min first (smaller, faster, but may have library issues)
+      // Fallback to full chromium if min fails
+      let chromiumModule;
+      let chromium;
+      let useChromiumMin = false;
+      
+      try {
+        // Try chromium-min first - it's smaller and faster
+        chromiumModule = await import("@sparticuz/chromium-min");
+        chromium = chromiumModule.default || chromiumModule;
+        useChromiumMin = true;
+        console.log("Using @sparticuz/chromium-min (minimal version)");
+      } catch (minError) {
+        console.warn("Failed to import chromium-min, trying full chromium...", minError);
+        // Fallback to full chromium
+        chromiumModule = await import("@sparticuz/chromium");
+        chromium = chromiumModule.default || chromiumModule;
+        console.log("Using @sparticuz/chromium (full version with all libraries)");
+      }
       
       // Configure chromium for serverless environments
       if (chromium.setGraphicsMode !== undefined) {
         chromium.setGraphicsMode = false;
       }
       
-      // Try v131 first, fallback to v119 if it fails
+      // Get executable path
+      // For chromium-min, try default first (it handles version internally)
+      // For full chromium, use v119 which is more stable
       let executablePath: string;
-      let chromiumVersion = "v131.0.1";
       
-      try {
+      if (useChromiumMin) {
+        try {
+          // chromium-min handles version internally, use default
+          executablePath = await chromium.executablePath();
+          console.log("Using chromium-min default path:", executablePath);
+        } catch (minError) {
+          console.warn("chromium-min default failed, trying v119...", minError);
+          // Fallback to v119
+          executablePath = await chromium.executablePath(
+            `https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar`
+          );
+          console.log("Using chromium-min v119 path:", executablePath);
+        }
+      } else {
+        // Full chromium - use v119 which is more stable and tested
+        const chromiumVersion = "v119.0.2";
         executablePath = await chromium.executablePath(
           `https://github.com/Sparticuz/chromium/releases/download/${chromiumVersion}/chromium-${chromiumVersion}-pack.tar`
         );
-        console.log(`Using Chromium ${chromiumVersion}, executable path:`, executablePath);
-      } catch (versionError) {
-        console.warn(`Failed to get Chromium ${chromiumVersion}, trying v119...`, versionError);
-        chromiumVersion = "v119.0.2";
-        executablePath = await chromium.executablePath(
-          `https://github.com/Sparticuz/chromium/releases/download/${chromiumVersion}/chromium-${chromiumVersion}-pack.tar`
-        );
-        console.log(`Using Chromium ${chromiumVersion}, executable path:`, executablePath);
+        console.log(`Using Chromium ${chromiumVersion} (stable for Vercel), executable path:`, executablePath);
       }
       
       // Additional args to fix libnss3.so and other library issues
+      // Critical: --single-process and --no-zygote are essential for Vercel
       const launchArgs = [
         ...chromium.args,
         '--disable-gpu',
@@ -87,7 +112,7 @@ export async function launchBrowser() {
         '--disable-client-side-phishing-detection',
         '--disable-component-update',
         '--disable-default-apps',
-        '--disable-features=TranslateUI',
+        '--disable-features=TranslateUI,BlinkGenPropertyTrees',
         '--disable-hang-monitor',
         '--disable-ipc-flooding-protection',
         '--disable-popup-blocking',
@@ -101,6 +126,8 @@ export async function launchBrowser() {
         '--no-pings',
         '--password-store=basic',
         '--use-mock-keychain',
+        '--disable-web-security',
+        '--disable-features=VizDisplayCompositor',
       ];
       
       return await puppeteerCore.launch({
