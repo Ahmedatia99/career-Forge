@@ -38,26 +38,28 @@ export function StorySection() {
           </div>
 
           <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-4">
+              <Image
+                width={500}
+                height={500}
+                src="professional-woman-laptop.png"
+                alt="Team member working"
+                className="rounded-xl object-cover"
+              />
+              <Image
+                width={500}
+                height={500}
+                src="businessman-sitting-office-desk-working-laptop-computer_109710-3666.png"
+                alt="Team member"
+                className="rounded-xl object-cover"
+              />
+            </div>
             <Image
-              width={1000}
-              height={1000}
-              src="professional-woman-laptop.png"
-              alt="Team member working"
-              className="rounded-xl object-cover"
-            />
-            <Image
-              width={1000}
-              height={1000}
+              width={500}
+              height={500}
               src="diverse-team-meeting-discussion.jpg"
               alt="Team meeting"
-              className="mt-8 rounded-xl object-cover"
-            />
-            <Image
-              width={450}
-              height={450}
-              src="professional-man-smiling-office.jpg"
-              alt="Team member"
-              className="col-span-2 rounded-xl object-cover"
+              className="rounded-xl object-cover"
             />
           </div>
         </div>
