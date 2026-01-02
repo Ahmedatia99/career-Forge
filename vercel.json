@@ -5,7 +5,6 @@
       "maxDuration": 60
     }
   },
-  "env": {
-    "PUPPETEER_SKIP_DOWNLOAD": "true"
-  }
+  "installCommand": "npm install",
+  "buildCommand": "npm run build"
 }

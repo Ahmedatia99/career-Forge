@@ -51,30 +51,35 @@ export async function launchBrowser() {
       }
       
       // CRITICAL: Provide the Chromium binary URL
-      // This is what was missing in your original code
+      // Use v119 for better stability with Vercel
       const executablePath = await chromium.executablePath(
-        "https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar"
+        `https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar`
       );
       
       console.log("Chromium executable path:", executablePath);
       
       return await puppeteerCore.launch({
-        args: chromium.args,
+        args: [
+          ...chromium.args,
+          '--disable-gpu',
+          '--disable-dev-shm-usage',
+          '--disable-setuid-sandbox',
+          '--no-first-run',
+          '--no-sandbox',
+          '--no-zygote',
+          '--single-process',
+        ],
         executablePath,
-        headless: chromium.headless,
-        defaultViewport: chromium.defaultViewport,
+        headless: true,
         ignoreHTTPSErrors: true,
       });
     } catch (error) {
       console.error("Failed to launch Chromium in serverless environment:", error);
       console.error("Error details:", error instanceof Error ? error.message : error);
+      console.error("Error stack:", error instanceof Error ? error.stack : 'No stack');
       
-      // Fallback to regular puppeteer if chromium-min fails
-      console.log("Falling back to regular puppeteer...");
-      return puppeteer.launch({
-        headless: true,
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'],
-      });
+      // Don't fallback to puppeteer in production - it won't work
+      throw new Error(`Chromium launch failed in serverless: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
@@ -84,8 +89,30 @@ export async function launchBrowser() {
   // - Non-serverless production
   // - When FORCE_PUPPETEER is set
   console.log("Using regular puppeteer (non-serverless or development)");
-  return puppeteer.launch({
+  
+  const launchOptions: any = {
     headless: true,
     args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
-  });
+  };
+
+  // In development on Windows, try to use system Chrome if puppeteer's Chrome isn't installed
+  if (!isProd && isWindows) {
+    const possiblePaths = [
+      'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
+      'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe',
+      process.env.LOCALAPPDATA + '\\Google\\Chrome\\Application\\chrome.exe',
+    ];
+
+    // Try to find Chrome
+    const fs = await import('fs');
+    for (const path of possiblePaths) {
+      if (fs.existsSync(path)) {
+        console.log("Using system Chrome:", path);
+        launchOptions.executablePath = path;
+        break;
+      }
+    }
+  }
+
+  return puppeteer.launch(launchOptions);
 }
