@@ -53,7 +53,7 @@ export async function launchBrowser() {
       // CRITICAL: Provide the Chromium binary URL
       // Use v119 for better stability with Vercel
       const executablePath = await chromium.executablePath(
-        `https://github.com/Sparticuz/chromium/releases/download/v119.0.2/chromium-v119.0.2-pack.tar`
+        `https://github.com/Sparticuz/chromium/releases/download/v131.0.1/chromium-v131.0.1-pack.tar`
       );
       
       console.log("Chromium executable path:", executablePath);
