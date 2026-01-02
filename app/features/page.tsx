@@ -1,6 +1,6 @@
 import { DashboardHeader } from '../_components/dashboard-header';
 import { AIFeedbackSection } from '../_components/feature/AI-FeedbackSection';
-import { CTASection } from '../_components/feature/CTASecrion';
+import CTASection from '@/app/_components/pricing-page/cta';
 import { FeaturesGridSection } from '../_components/feature/FeaturesSection';
 import { HeroSection } from '../_components/feature/HeroSection';
 import { JobMatchingSection } from '../_components/feature/JobMatchingSection';
@@ -15,6 +15,7 @@ export default function page() {
 				<AIFeedbackSection />
 				<JobMatchingSection />
 				<FeaturesGridSection />
+				<CTASection />
 			</main>
 			<Footer />
 		</>
