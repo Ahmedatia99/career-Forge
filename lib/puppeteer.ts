@@ -143,6 +143,22 @@ export async function launchBrowser() {
     args: isProd ? ['--no-sandbox', '--disable-setuid-sandbox'] : [],
   };
 
+  // Check if custom Chromium path is provided via environment variable
+  // Usage: CHROMIUM_PATH=/usr/bin/chromium-browser
+  // This allows manual installation: sudo apt-get install chromium-browser
+  // Then set: export CHROMIUM_PATH=/usr/bin/chromium-browser
+  const customChromiumPath = process.env.CHROMIUM_PATH;
+  if (customChromiumPath) {
+    const fs = await import('fs');
+    if (fs.existsSync(customChromiumPath)) {
+      console.log("Using custom Chromium path from CHROMIUM_PATH:", customChromiumPath);
+      launchOptions.executablePath = customChromiumPath;
+      return puppeteer.launch(launchOptions);
+    } else {
+      console.warn(`CHROMIUM_PATH specified but file not found: ${customChromiumPath}`);
+    }
+  }
+
   // In development on Windows, try to use system Chrome if puppeteer's Chrome isn't installed
   if (!isProd && isWindows) {
     const possiblePaths = [
@@ -156,6 +172,28 @@ export async function launchBrowser() {
     for (const path of possiblePaths) {
       if (fs.existsSync(path)) {
         console.log("Using system Chrome:", path);
+        launchOptions.executablePath = path;
+        break;
+      }
+    }
+  }
+
+  // On Linux, try to use system Chromium if available
+  // Supports: sudo apt-get install chromium-browser
+  // Puppeteer will automatically detect and use: /usr/bin/chromium-browser
+  if (!isWindows && !isProd) {
+    const fs = await import('fs');
+    const possiblePaths = [
+      '/usr/bin/chromium-browser',
+      '/usr/bin/chromium',
+      '/snap/bin/chromium',
+      '/usr/bin/google-chrome',
+      '/usr/bin/google-chrome-stable',
+    ];
+
+    for (const path of possiblePaths) {
+      if (fs.existsSync(path)) {
+        console.log("Using system Chromium/Chrome:", path);
         launchOptions.executablePath = path;
         break;
       }
