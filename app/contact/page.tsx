@@ -19,7 +19,6 @@ function page() {
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		console.log(form);
 		setForm({
 			fullName: '',
 			email: '',
