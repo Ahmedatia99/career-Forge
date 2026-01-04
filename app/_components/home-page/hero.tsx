@@ -1,8 +1,8 @@
-"use client"
+"use client";
 import Image from "next/image";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
-import Link  from 'next/link';
+import Link from "next/link";
 
 export function Hero() {
   const { user } = useAuth();
@@ -18,8 +18,18 @@ export function Hero() {
             AI handle the heavy lifting.
           </p>
           <div className="flex gap-4 items-center">
-            {!user ? <Button><Link href="/signup"> Signup</Link></Button> : <Button><Link href="/dashboard">Dashboard</Link></Button>}
-            <Button className="bg-gray-400 cursor-not-allowed hover:bg-gray-400">Upload CV</Button>
+            {!user ? (
+              <Button>
+                <Link href="/signup"> Signup</Link>
+              </Button>
+            ) : (
+              <Button>
+                <Link href="/dashboard">Dashboard</Link>
+              </Button>
+            )}
+            <Button className="bg-gray-400 cursor-not-allowed hover:bg-gray-400">
+              Upload CV
+            </Button>
           </div>
         </div>
 

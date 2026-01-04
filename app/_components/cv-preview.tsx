@@ -128,7 +128,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
       </div>
 
       <div className="overflow-hidden rounded-lg border shadow-xl">
-        <div className="max-h-[600px] overflow-y-auto sm:max-h-[800px]">
+        <div className="max-h-150 overflow-y-auto sm:max-h-200">
           {renderTemplate()}
         </div>
       </div>
