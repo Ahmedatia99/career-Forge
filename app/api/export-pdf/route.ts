@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getPDFService } from "@/lib/services/pdf-service";
+import { getPDFService } from "@/services/pdf-service";
 import type { CV } from "@/types/types";
 
 /**

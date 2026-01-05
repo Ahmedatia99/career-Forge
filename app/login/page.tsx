@@ -1,48 +1,51 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import Link from "next/link"
-import { Mail, Lock } from "lucide-react"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Mail, Lock } from "lucide-react";
 
-import { useAuth } from "@/lib/auth-context"
-import { Card } from "@/components/ui/card"
-import { BrandingSection } from "../_components/Auth-page/BrandingSection"
-import { SubmitForm } from "../_components/Auth-page/SubmitForm"
-import { FormInput } from "../_components/Auth-page/FormInput"
+import { useAuth } from "@/context/auth-context";
+import { Card } from "@/components/ui/card";
+import { BrandingSection } from "../_components/Auth-page/BrandingSection";
+import { SubmitForm } from "../_components/Auth-page/SubmitForm";
+import { FormInput } from "../_components/Auth-page/FormInput";
+import { login } from "@/services/auth.service";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const { login } = useAuth()
+  const router = useRouter();
+  const { loginUser } = useAuth();
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async () => {
-    setError("")
-    setIsLoading(true)
+    setError("");
+    setIsLoading(true);
 
     try {
-      await login(email, password)
-      router.push("/dashboard")
-    } catch {
-      setError("Invalid email or password")
+      const res = await login({
+        email,
+        password,
+      });
+      loginUser(res.data);
+      router.push("/dashboard");
+    } catch (err: any) {
+      setError("LOGIN ERROR:", err.response?.data?.message || err.message || "An error occurred during login.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-linear-to-br from-slate-50 via-blue-50 to-slate-100 flex flex-col lg:flex-row items-center justify-center p-4 relative overflow-hidden">
-      
       {/* Background effects */}
       <div className="absolute left-0 top-0 h-full w-40 bg-linear-to-r from-blue-200/40 to-transparent pointer-events-none" />
       <div className="absolute right-12 top-20 w-80 h-80 bg-linear-to-br from-blue-300/30 to-blue-200/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10">
-        
         {/* Left branding */}
         <BrandingSection />
 
@@ -86,9 +89,7 @@ export default function LoginPage() {
                   disabled={isLoading}
                 />
 
-                {error && (
-                  <p className="text-sm text-destructive">{error}</p>
-                )}
+                {error && <p className="text-sm text-destructive">{error}</p>}
 
                 <div className="text-right">
                   <Link
@@ -110,5 +111,5 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

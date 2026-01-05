@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth-context"
+import { useAuth } from "@/context/auth-context"
 import { DashboardHeader } from "../_components/dashboard-header"
 import { CVCard } from "../_components/cv-card"
 import { Button } from "@/components/ui/button"

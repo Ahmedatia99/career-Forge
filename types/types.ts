@@ -6,8 +6,15 @@ export type LoginFormData = {
 export type RegisterFormData = {
 	email: string;
 	password: string;
-	confirmedPassword: string;
+  firstName: string;
+  lastName: string;
+	confirmedPassword?: string;
 };
+
+export interface ResetPassword {
+  token: string;
+  newPassword: string;
+}
 export interface UserLink {
   id:string
   label: string;

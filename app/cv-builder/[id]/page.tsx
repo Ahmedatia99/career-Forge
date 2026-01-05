@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
-import { useAuth } from "@/lib/auth-context";
+import { useAuth } from "@/context/auth-context";
 import { DashboardHeader } from "../../_components/dashboard-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -136,7 +136,7 @@ export default function CVBuilderPage() {
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <div className="container mx-auto px-4 py-4 sm:py-8">
-        <div className="mb-4 flex flex-row gap-3 sm:mb-6 justify-between max-sm:flex-col">
+        <div className="mb-4 flex flex-row gap-3 sm:mb-6 justify-between ">
           <Button
             onClick={() => router.push("/dashboard")}
             className="gap-2 sm:w-auto"

@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, User } from 'lucide-react';
 
-import { useAuth } from '@/lib/auth-context';
+import { useAuth } from '@/context/auth-context';
 import { Card } from '@/components/ui/card';
 import { BrandingSection } from '../_components/Auth-page/BrandingSection';
 import { FormInput } from '../_components/Auth-page/FormInput';
