@@ -15,7 +15,7 @@ interface TwoColumnTemplateProps {
 
 export function ModernTemplate({ data }: TwoColumnTemplateProps) {
   return (
-    <div className="mx-auto max-w-[1100px] bg-white text-gray-900 shadow-lg">
+    <div className="mx-auto max-w-275 bg-white text-gray-900 shadow-lg">
       {/* Header */}
       <header className="border-b px-4 py-4 text-center sm:px-8 sm:py-5">
         <h1 className="text-xl font-bold capitalize flex flex-col gap-1 sm:text-3xl sm:gap-2">
@@ -43,7 +43,7 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
             <div className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
               {data.personalInfo?.email && (
                 <div className="flex items-start gap-2">
-                  <Mail className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-gray-500 sm:h-4 sm:w-4" />
+                  <Mail className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="break-all leading-relaxed">
                     {data.personalInfo.email}
                   </span>
@@ -52,7 +52,7 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
 
               {data.personalInfo?.phone && (
                 <div className="flex items-start gap-2">
-                  <Phone className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-gray-500 sm:h-4 sm:w-4" />
+                  <Phone className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="leading-relaxed">
                     {data.personalInfo.phone}
                   </span>
@@ -61,7 +61,7 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
 
               {data.personalInfo?.country && (
                 <div className="flex items-start gap-2">
-                  <MapPin className="h-3.5 w-3.5 mt-0.5 flex-shrink-0 text-gray-500 sm:h-4 sm:w-4" />
+                  <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="leading-relaxed">
                     {data.personalInfo.country}
                   </span>
@@ -74,7 +74,7 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
                   href={link.url}
                   className="flex items-center gap-2 text-xs text-gray-700 hover:text-blue-600 hover:underline transition-colors sm:text-sm"
                 >
-                  <LinkIcon className="h-3.5 w-3.5 flex-shrink-0 sm:h-4 sm:w-4" />
+                  <LinkIcon className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
                   <span className="truncate">{link.label}</span>
                 </a>
               ))}
