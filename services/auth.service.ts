@@ -3,11 +3,13 @@ import {Login, Register} from "@/types/types";
 export const register = (data: Register) =>
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, data);
 
-export const login = (data: Login) =>
+export const login = (data: Login) =>{
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, data);
 
+}
+
 export const refreshToken = () =>
-  api.post("/auth/refresh");
+  api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/refresh`);
 
 export const logout = () =>
   api.post("/auth/logout");
