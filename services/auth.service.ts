@@ -1,10 +1,10 @@
 import api from "@/lib/axios";
 import {Login, Register} from "@/types/types";
 export const register = (data: Register) =>
-  api.post("/auth/register", data);
+  api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/register`, data);
 
 export const login = (data: Login) =>
-  api.post("/auth/login", data);
+  api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/auth/login`, data);
 
 export const refreshToken = () =>
   api.post("/auth/refresh");
