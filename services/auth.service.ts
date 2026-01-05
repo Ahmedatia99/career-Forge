@@ -4,6 +4,7 @@ export const register = (data: Register) =>
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/register`, data);
 
 export const login = (data: Login) =>{
+  console.log(process.env.NEXT_PUBLIC_BASE_URL)
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`, data);
 
 }
