@@ -27,8 +27,20 @@ export function Hero() {
                 <Link href="/dashboard">Dashboard</Link>
               </Button>
             )}
-            <Button className="bg-gray-400 cursor-not-allowed hover:bg-gray-400">
-              Upload CV
+
+            <Button
+              className={
+                !user
+                  ? "bg-gray-400 cursor-not-allowed hover:bg-gray-400"
+                  : "bg-accent"
+              }
+            >
+              <Link
+                href="/dashboard"
+                className={!user ? "cursor-not-allowed" : "cursor-pointer"}
+              >
+                Upload CV
+              </Link>
             </Button>
           </div>
         </div>

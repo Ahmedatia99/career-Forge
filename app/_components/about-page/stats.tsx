@@ -21,13 +21,13 @@ const stats = [
 
 export function StatsSection() {
   return (
-    <section className="py-12 bg-muted/30">
+    <section className="py-12 bg-muted/20">
       <div className="container mx-auto px-4">
         <div className="grid gap-6 md:grid-cols-3">
           {stats.map((stat) => (
             <Card
               key={stat.label}
-              className="flex flex-col items-center p-6 text-center hover:border-primary/50"
+              className="flex flex-col items-center p-6 text-center border-2 border-accent/50"
             >
               <stat.icon className="mb-4 h-6 w-6 text-blue-500" />
               <p className="text-3xl font-bold">{stat.value}</p>

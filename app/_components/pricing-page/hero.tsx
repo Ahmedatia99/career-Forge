@@ -36,7 +36,7 @@ export default function HeroSection() {
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Pricing Card */}
             <div className="lg:col-span-1">
-              <div className="rounded-2xl bg-white p-8 shadow-lg">
+              <div className="rounded-2xl bg-white p-8 shadow-xs shadow-accent border border-accent/70">
                 <h3 className="mb-2 text-xl font-semibold text-gray-900">
                   Free Forever Plan
                 </h3>
@@ -127,7 +127,7 @@ export default function HeroSection() {
             {/* Info Cards */}
             <div className="lg:col-span-2 flex flex-col gap-6">
               {/* Why Free Card */}
-              <div className="rounded-2xl bg-white p-8 shadow-lg">
+              <div className="rounded-2xl bg-white p-8 shadow-xs shadow-accent border border-accent/70">
                 <div className="mb-4 flex items-center gap-3">
                   <div className="rounded-full bg-blue-100 p-2">
                     <HelpCircle className="h-5 w-5 text-blue-600" />
@@ -144,7 +144,7 @@ export default function HeroSection() {
               </div>
 
               {/* Privacy First Card */}
-              <div className="rounded-2xl bg-white p-8 shadow-lg">
+              <div className="rounded-2xl bg-white p-8 shadow-xs shadow-accent border border-accent/70">
                 <div className="mb-4 flex items-center gap-3">
                   <div className="rounded-full bg-blue-100 p-2">
                     <HelpCircle className="h-5 w-5 text-blue-600" />
