@@ -23,12 +23,12 @@ import { LanguagesSection } from "../../_components/cv-builder/languages-section
 import { CertificationSection } from "../../_components/cv-builder/certification-section";
 import { CVPreview } from "../../_components/cv-preview";
 import { ArrowLeft, Save } from "lucide-react";
-import type { CV, UserProfile } from "@/lib/types";
+import type { CV, UserProfile } from "@/types/types";
 
 export default function CVBuilderPage() {
   const router = useRouter();
   const params = useParams();
-  const { user, isLoading } = useAuth();
+  const { user, loading } = useAuth();
   const cvId = params.id as string;
 
   const [cvData, setCvData] = useState<CV>({
@@ -58,43 +58,45 @@ export default function CVBuilderPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (!isLoading && !user) {
+    if (!loading && !user) {
       router.push("/login");
       return;
     }
 
-    // Load existing CV or initialize with profile data
-    const storedCvs = localStorage.getItem("cvs");
-    const cvs: CV[] = storedCvs ? JSON.parse(storedCvs) : [];
-    const existingCv = cvs.find((cv) => cv.id === cvId);
+    if (!loading && user) {
+      // Load existing CV or initialize with profile data
+      const storedCvs = localStorage.getItem("cvs");
+      const cvs: CV[] = storedCvs ? JSON.parse(storedCvs) : [];
+      const existingCv = cvs.find((cv) => cv.id === cvId);
 
-    if (existingCv) {
-      setCvData(existingCv);
-    } else {
-      // Initialize with user profile data
-      const storedProfile = localStorage.getItem("user_profile");
-      if (storedProfile) {
-        const profile: UserProfile = JSON.parse(storedProfile);
-        setCvData((prev: CV) => ({
-          ...prev,
-          personalInfo: profile,
-        }));
-      } else if (user) {
-        setCvData((prev: CV) => ({
-          ...prev,
-          personalInfo: {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            headline: prev.personalInfo?.headline ?? "",
-            email: user.email,
-            phone: prev.personalInfo?.phone ?? "",
-            country: prev.personalInfo?.country ?? "",
-            links: prev.personalInfo?.links ?? [],
-          },
-        }));
+      if (existingCv) {
+        setCvData(existingCv);
+      } else {
+        // Initialize with user profile data
+        const storedProfile = localStorage.getItem("user_profile");
+        if (storedProfile) {
+          const profile: UserProfile = JSON.parse(storedProfile);
+          setCvData((prev: CV) => ({
+            ...prev,
+            personalInfo: profile,
+          }));
+        } else if (user) {
+          setCvData((prev: CV) => ({
+            ...prev,
+            personalInfo: {
+              firstName: user.firstName ?? "",
+              lastName: user.lastName ?? "",
+              headline: prev.personalInfo?.headline ?? "",
+              email: user.email,
+              phone: prev.personalInfo?.phone ?? "",
+              country: prev.personalInfo?.country ?? "",
+              links: prev.personalInfo?.links ?? [],
+            },
+          }));
+        }
       }
     }
-  }, [user, isLoading, router, cvId]);
+  }, [user, loading, router, cvId]);
 
   const handleSave = () => {
     setIsSaving(true);
@@ -124,7 +126,7 @@ export default function CVBuilderPage() {
     }, 500);
   };
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />

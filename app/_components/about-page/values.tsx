@@ -30,7 +30,7 @@ const values = [
 
 export function ValuesSection() {
   return (
-    <section className="py-16 bg-muted/30 md:py-24">
+    <section className="py-16 bg-muted/20 md:py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto mb-12 max-w-2xl text-center">
           <h2 className="mb-4 text-3xl font-bold">Driven by Core Values</h2>
@@ -44,7 +44,7 @@ export function ValuesSection() {
           {values.map((value) => (
             <Card
               key={value.title}
-              className="text-center hover:border-primary/50"
+              className="text-center border-2 border-primary/50"
             >
               <CardHeader>
                 <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-blue-100">

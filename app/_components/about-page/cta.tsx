@@ -1,8 +1,10 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CheckCircle } from "lucide-react";
 import Image from "next/image";
-
+import Link from "next/link";
+import { useAuth } from "@/context/auth-context";
 const features = [
   "Real-time ATS Score analysis",
   "Intelligent keyword optimization",
@@ -10,6 +12,7 @@ const features = [
 ];
 
 export function CtaSection() {
+  const { user } = useAuth();
   return (
     <section className="py-16 md:py-24">
       <div className="container mx-auto px-4">
@@ -33,9 +36,13 @@ export function CtaSection() {
               </ul>
               <Button
                 variant="outline"
-                className="border-white text-blue-500 hover:bg-blue-500 "
+                className="text-accent !hover:text-white"
               >
-                Start Your Free Trial
+                {!user ? (
+                  <Link href="/signup">Start Your Free Trial</Link>
+                ) : (
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                )}
               </Button>
             </div>
 

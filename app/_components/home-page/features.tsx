@@ -50,7 +50,7 @@ export function Features() {
           {features.map((feature) => (
             <Card
               key={feature.title}
-              className="border hover:border-primary/50 transition"
+              className="border-2 border-primary/50 transition"
             >
               <CardHeader>
                 <div className="mb-3">{feature.icon}</div>

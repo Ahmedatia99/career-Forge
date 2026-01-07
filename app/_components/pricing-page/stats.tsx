@@ -5,7 +5,7 @@ export default function StatsSection() {
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-8 sm:grid-cols-3">
             <div className="text-center">
-              <p className="text-4xl font-bold text-blue-600">500k+</p>
+              <p className="text-4xl font-bold text-blue-600 ">500k+</p>
               <p className="mt-2 text-sm font-semibold uppercase tracking-wide text-gray-600">
                 Resumes Optimized
               </p>

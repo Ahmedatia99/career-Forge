@@ -1,14 +1,10 @@
-export type LoginFormData = {
-	email: string;
-	password: string;
-};
+
 
 export type RegisterFormData = {
 	email: string;
 	password: string;
   firstName: string;
   lastName: string;
-	confirmedPassword?: string;
 };
 
 export interface ResetPassword {
@@ -60,6 +56,19 @@ export interface Project {
   description: string
   url?: string
   technologies: string[]
+}
+
+export interface LoginResponse {
+  token: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    emailVerified: boolean;
+    role: string;
+  };
 }
 
 export interface Language {
