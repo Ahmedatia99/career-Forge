@@ -4,7 +4,6 @@ import { Login, Register } from "@/types/types";
 export const register = (data: Register) =>
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/register`, data);
 
-// Return the promise so callers can await the response
 export const login = (data: Login) => {
   return api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`, data);
 };

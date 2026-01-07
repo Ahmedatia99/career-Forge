@@ -30,14 +30,12 @@ export default function LoginPage() {
         email,
         password,
       });
-      loginUser(res.data);
+      const { token, refreshToken, user } = res.data.data;
+      loginUser(res.data.data);
+
       router.push("/dashboard");
-    } catch (err: any) {
-      setError(
-        err?.response?.data?.message ||
-          err?.message ||
-          "An error occurred during login."
-      );
+    } catch (error: any) {
+      setError(error?.response?.message || "An error occurred during login.");
     } finally {
       setIsLoading(false);
     }
