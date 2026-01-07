@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { FileText, LogOut, User, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
+import Image from "next/image";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,17 +31,15 @@ export function DashboardHeader() {
   return (
     <header className="relative z-10 border-b bg-card shadow-xs">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link href={"/"} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
-            <FileText className="h-5 w-5 text-primary-foreground" />
-          </div>
-          <span className="text-xl font-semibold">CV</span>
+        <Link href={"/"} className="flex items-center">
+          <Image src="/logo.png" alt="Logo" width={100} height={100} />
+          <span className="text-xl font-semibold">Career Forge</span>
         </Link>
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
-            href="/feature"
+            href="/features"
             className="text-sm font-medium hover:text-primary transition"
           >
             Features
@@ -137,7 +135,7 @@ export function DashboardHeader() {
         <div className="md:hidden border-t bg-card">
           <nav className="container mx-auto flex flex-col px-4 py-4 space-y-4">
             <Link
-              href="/feature"
+              href="/features"
               className="text-sm font-medium hover:text-primary transition py-2"
               onClick={closeMobileMenu}
             >

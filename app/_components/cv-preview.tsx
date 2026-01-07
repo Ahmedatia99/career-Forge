@@ -6,7 +6,7 @@ import { ProfessionalTemplate } from "./cv-templates/professional-template";
 import { ModernTemplate } from "./cv-templates/modern-template";
 import { MinimalTemplate } from "./cv-templates/minimal-template";
 import { Button } from "@/components/ui/button";
-import { Download, Loader2 } from "lucide-react";
+import { Download, Loader2, Sparkles } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -24,61 +24,14 @@ interface CVPreviewProps {
 
 export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
   const [isExporting, setIsExporting] = useState(false);
+  const [isEnhance, setIsEnhance] = useState(false);
 
   const handleExport = async () => {
     setIsExporting(true);
-
-    try {
-      // Call the API endpoint to generate PDF
-      const response = await fetch("/api/export-pdf", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          cvData: data,
-          options: {
-            format: "A4",
-            margin: {
-              top: "0.1in",
-              right: "0.1in",
-              bottom: "0.1in",
-              left: "0.1in",
-            },
-            printBackground: true,
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || "Failed to generate PDF");
-      }
-
-      // Get the PDF blob
-      const blob = await response.blob();
-
-      // Create download link
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `${data.title || "CV"}.pdf`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      toast.success("PDF exported successfully!");
-    } catch (error) {
-      console.error("Export error:", error);
-      toast.error(
-        error instanceof Error
-          ? `Failed to export PDF: ${error.message}`
-          : "Failed to export PDF. Please try again."
-      );
-    } finally {
-      setIsExporting(false);
-    }
+    setIsEnhance(true);
+    alert(
+      "Exporting PDF and Enhancing with AI features are not implemented yet."
+    );
   };
 
   const renderTemplate = () => {
@@ -122,6 +75,22 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
             <>
               <Download className="h-4 w-4" />
               Export PDF
+            </>
+          )}
+        </Button>
+        <Button
+          onClick={handleExport}
+          disabled={isEnhance}
+          className="gap-2 sm:mt-8"
+        >
+          {isEnhance ? (
+            <>
+              <Loader2 className="h-4 w-4 animate-spin" />
+            </>
+          ) : (
+            <>
+              <Sparkles className="h-4 w-4" />
+              AI Enhancement
             </>
           )}
         </Button>
