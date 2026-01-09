@@ -19,6 +19,14 @@ api.interceptors.request.use((config) => {
 
 api.interceptors.response.use(res => res, async(error)=>{
     if(error.response?.status === 401){
+        // Don't try to refresh token for login/register endpoints
+        const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
+                              error.config?.url?.includes('/auth/register');
+        
+        if(isAuthEndpoint) {
+            return Promise.reject(error);
+        }
+        
         try {
             const res = await refreshToken()
             setToken(res.data.token);
@@ -30,5 +38,6 @@ api.interceptors.response.use(res => res, async(error)=>{
             return Promise.reject(error);
         }
     }
+    return Promise.reject(error);
 })
 export default api;
