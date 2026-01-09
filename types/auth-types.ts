@@ -12,6 +12,10 @@ export interface AuthUser {
     user: AuthUser;
   }
 
+  export interface LoginData {
+  email: string;
+  password: string;
+  }
   export interface RegisterResponse {
     success: boolean;
     status?: number;
