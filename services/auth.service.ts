@@ -1,10 +1,11 @@
 import api from "@/lib/axios";
-import { LoginResponse, RegisterResponse } from "@/types/auth-types";
+import { LoginData, RegisterResponse } from "@/types/auth-types";
+import { RegisterFormData } from "@/types/types";
 
-export const register = (data: RegisterResponse) =>
+export const register = (data: RegisterFormData) =>
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/register`, data);
 
-export const login = (data: LoginResponse) => {
+export const login = (data: LoginData) => {
   return api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`, data);
 };
 
