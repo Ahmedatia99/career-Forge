@@ -14,35 +14,64 @@ export function PersonalInfoSection({
   data,
   onChange,
 }: PersonalInfoSectionProps) {
-  const handleChange = (field: keyof UserProfile, value: string) => {
-    if (!data) return;
-    onChange({ ...data, [field]: value });
+  // Ensure data always exists
+  const safeData: UserProfile = data || {
+    profileSetting: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      country: "",
+    },
+    headline: "",
+    links: [],
+  };
+
+  const handleProfileSettingChange = (field: string, value: string) => {
+    const currentProfileSetting = safeData.profileSetting || {
+      firstName: "",
+      lastName: "",
+      email: "",
+      phone: "",
+      country: "",
+    };
+    onChange({
+      ...safeData,
+      profileSetting: {
+        ...currentProfileSetting,
+        [field]: value,
+      },
+    });
+  };
+
+  const handleHeadlineChange = (value: string) => {
+    onChange({
+      ...safeData,
+      headline: value,
+    });
   };
 
   const updateLink = (id: string, field: "label" | "url", value: string) => {
-    if (!data) return;
-    const newLinks = (data.links ?? []).map((link) =>
+    const newLinks = (safeData.links ?? []).map((link) =>
       link.id === id ? { ...link, [field]: value } : link
     );
 
-    onChange({ ...data, links: newLinks });
+    onChange({ ...safeData, links: newLinks });
   };
   const removeLink = (id: string) => {
-    if (!data) return;
-    const newLinks = [...(data.links ?? [])];
+    const newLinks = [...(safeData.links ?? [])];
     const index = newLinks.findIndex((link) => link.id === id);
     if (index !== -1) {
       newLinks.splice(index, 1);
-      onChange({ ...data, links: newLinks });
+      onChange({ ...safeData, links: newLinks });
     }
   };
 
   const addLink = () => {
-    if (!data) return;
     onChange({
-      ...data,
+      ...safeData,
       links: [
-        ...(data.links ?? []),
+        ...(safeData.links ?? []),
         { label: "", url: "", id: crypto.randomUUID() },
       ],
     });
@@ -55,8 +84,8 @@ export function PersonalInfoSection({
           <Label htmlFor="firstName">First Name</Label>
           <Input
             id="firstName"
-            value={data?.firstName ?? ""}
-            onChange={(e) => handleChange("firstName", e.target.value)}
+            value={safeData.profileSetting?.firstName ?? ""}
+            onChange={(e) => handleProfileSettingChange("firstName", e.target.value)}
             placeholder="Ahmed"
           />
         </div>
@@ -65,8 +94,8 @@ export function PersonalInfoSection({
           <Label htmlFor="lastName">Last Name</Label>
           <Input
             id="lastName"
-            value={data?.lastName ?? ""}
-            onChange={(e) => handleChange("lastName", e.target.value)}
+            value={safeData.profileSetting?.lastName ?? ""}
+            onChange={(e) => handleProfileSettingChange("lastName", e.target.value)}
             placeholder="Atia"
           />
         </div>
@@ -74,12 +103,12 @@ export function PersonalInfoSection({
 
       <div className="grid gap-4 md:grid-cols-2">
         <div className="space-y-2">
-          <Label htmlFor="firstName">Headline</Label>
+          <Label htmlFor="headline">Headline</Label>
           <Input
-            id="firstName"
-            value={data?.headline ?? ""}
-            onChange={(e) => handleChange("headline", e.target.value)}
-            placeholder="Ahmed"
+            id="headline"
+            value={safeData.headline ?? ""}
+            onChange={(e) => handleHeadlineChange(e.target.value)}
+            placeholder="Software Engineer"
           />
         </div>
         <div>
@@ -87,8 +116,8 @@ export function PersonalInfoSection({
           <Input
             id="email"
             type="email"
-            value={data?.email ?? ""}
-            onChange={(e) => handleChange("email", e.target.value)}
+            value={safeData.profileSetting?.email ?? ""}
+            onChange={(e) => handleProfileSettingChange("email", e.target.value)}
             placeholder="atia.ahmed@example.com"
           />
         </div>
@@ -99,8 +128,8 @@ export function PersonalInfoSection({
           <Label htmlFor="phone">Phone</Label>
           <Input
             id="phone"
-            value={data?.phone ?? ""}
-            onChange={(e) => handleChange("phone", e.target.value)}
+            value={safeData.profileSetting?.phone ?? ""}
+            onChange={(e) => handleProfileSettingChange("phone", e.target.value)}
             placeholder="+20123456789"
           />
         </div>
@@ -109,8 +138,8 @@ export function PersonalInfoSection({
           <Label htmlFor="country">Country</Label>
           <Input
             id="country"
-            value={data?.country}
-            onChange={(e) => handleChange("country", e.target.value)}
+            value={safeData.profileSetting?.country ?? ""}
+            onChange={(e) => handleProfileSettingChange("country", e.target.value)}
             placeholder="Egypt"
           />
         </div>
@@ -120,7 +149,7 @@ export function PersonalInfoSection({
       <div className="space-y-2">
         <Label>Links</Label>
 
-        {(data?.links ?? []).map((link) => (
+        {(safeData.links ?? []).map((link) => (
           <div key={link.id} className="grid grid-cols-[1fr_2fr_auto] gap-2">
             <Input
               placeholder="Label (GitHub, LinkedIn)"
