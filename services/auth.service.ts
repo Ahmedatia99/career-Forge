@@ -1,21 +1,77 @@
 import api from "@/lib/axios";
-import { LoginData, RegisterResponse } from "@/types/auth-types";
+import { LoginData, RegisterResponse, LoginResponse, AuthUser } from "@/types/auth-types";
 import { RegisterFormData } from "@/types/types";
 
-export const register = (data: RegisterFormData) =>
-  api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/register`, data);
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}
 
-export const login = (data: LoginData) => {
-  return api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`, data);
+export interface RegisterResponseData {
+  success: boolean;
+  data: {
+    token?: string;
+    user?: AuthUser;
+    userId?: string;
+  };
+  message?: string;
+}
+
+export interface LoginResponseData {
+  success: boolean;
+  data: {
+    token: string;
+    user: AuthUser;
+  };
+  message?: string;
+}
+
+export interface UserProfileResponse {
+  success: boolean;
+  data: AuthUser;
+  message?: string;
+}
+
+/**
+ * Register a new user
+ */
+export const register = (data: RegisterFormData) => {
+  return api.post<RegisterResponseData>("/v1/auth/register", data);
 };
 
-export const refreshToken = () =>
-  api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/refresh`);
+/**
+ * Authenticate a user and get access token
+ */
+export const login = (data: LoginData) => {
+  return api.post<LoginResponseData>("/v1/auth/login", data);
+};
 
-export const logout = () => api.post("/auth/logout");
+/**
+ * Refresh access token using refresh token
+ */
+export const refreshToken = () => {
+  return api.post<LoginResponseData>("/v1/auth/refresh");
+};
 
+/**
+ * Logout user and invalidate tokens
+ */
+export const logout = () => {
+  return api.post("/auth/logout");
+};
 
-export const resendVerification = () => api.post("/auth/resend-verification");
+/**
+ * Resend email verification link
+ */
+export const resendVerification = () => {
+  return api.post("/auth/resend-verification");
+};
 
-export const getCurrentUser = () =>
-  api.get(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/users/me`);
+/**
+ * Get current authenticated user profile
+ */
+export const getCurrentUser = () => {
+  return api.get<UserProfileResponse>("/v1/users/me");
+};
