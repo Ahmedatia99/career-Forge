@@ -1,10 +1,11 @@
 import api from "@/lib/axios";
-import { Login, Register } from "@/types/types";
+import { LoginData, RegisterResponse } from "@/types/auth-types";
+import { RegisterFormData } from "@/types/types";
 
-export const register = (data: Register) =>
+export const register = (data: RegisterFormData) =>
   api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/register`, data);
 
-export const login = (data: Login) => {
+export const login = (data: LoginData) => {
   return api.post(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/auth/login`, data);
 };
 
@@ -13,13 +14,8 @@ export const refreshToken = () =>
 
 export const logout = () => api.post("/auth/logout");
 
-export const forgotPassword = (email: string) =>
-  api.post("/auth/forgot-password", { email });
-
-export const resetPassword = (data: any) =>
-  api.post("/auth/reset-password", data);
-
-export const verifyEmail = (token: string) =>
-  api.get(`/auth/verify-email/${token}`);
 
 export const resendVerification = () => api.post("/auth/resend-verification");
+
+export const getCurrentUser = () =>
+  api.get(`${process.env.NEXT_PUBLIC_BASE_URL}/v1/users/me`);

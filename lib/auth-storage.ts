@@ -39,10 +39,30 @@ export const getUser = () => {
   return null;
 };
 
+export const setUserProfile = (profile: any) => {
+  if (typeof document !== 'undefined') {
+    localStorage.setItem("user_profile", JSON.stringify(profile));
+  }
+};
+
+export const getUserProfile = () => {
+  if (typeof document !== 'undefined') {
+    const profileStr = localStorage.getItem("user_profile");
+    if (profileStr) {
+      try {
+        return JSON.parse(profileStr);
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+  return null;
+};
+
 export const clearToken = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("user");
-  
+  localStorage.removeItem("user_profile");
 
   if (typeof document !== 'undefined') {
     document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';

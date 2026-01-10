@@ -1,4 +1,4 @@
-
+import { ProfileSetting } from "./user-types";
 
 export type RegisterFormData = {
 	email: string;
@@ -17,14 +17,9 @@ export interface UserLink {
   url: string;
 }
 export interface UserProfile {
-  firstName: string
-  lastName: string
+  profileSetting: ProfileSetting
   headline: string
-  email: string
-  phone: string
-  country: string
-   links?: UserLink[];
-  profilePicture?: string
+  links?: UserLink[];
 }
 
 
