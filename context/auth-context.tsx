@@ -9,14 +9,14 @@ import {
   getToken,
 } from "@/lib/auth-storage";
 import { LoginResponse, AuthUser, RegisterResponse } from "@/types/auth-types";
-import { register } from "@/services/auth.service";
+import { register, login, getCurrentUser, logout as logoutService } from "@/services/auth.service";
 import { RegisterFormData } from "@/types/types";
 
 interface AuthContextType {
   user: AuthUser | null;
   loginUser: (data: LoginResponse) => void;
   registerUser: (data: RegisterFormData) => Promise<RegisterResponse>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
 }
 
@@ -26,19 +26,37 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true); // Start with true to
 
-  // Restore user from localStorage on mount/refresh
+  // Restore user from localStorage and verify with API on mount/refresh
   useEffect(() => {
-    const token = getToken();
-    const storedUser = getStoredUser();
+    const initAuth = async () => {
+      const token = getToken();
+      const storedUser = getStoredUser();
 
-    if (token && storedUser) {
-      setUser(storedUser);
-    } else {
-      clearToken();
-      setUser(null);
-    }
+      if (token && storedUser) {
+        // Verify token is still valid by fetching current user
+        try {
+          const response = await getCurrentUser();
+          if (response.data.success && response.data.data) {
+            setUser(response.data.data);
+            saveUser(response.data.data);
+          } else {
+            clearToken();
+            setUser(null);
+          }
+        } catch (err) {
+          // Token expired or invalid
+          clearToken();
+          setUser(null);
+        }
+      } else {
+        clearToken();
+        setUser(null);
+      }
 
-    setLoading(false);
+      setLoading(false);
+    };
+
+    initAuth();
   }, []);
 
   // Moved cookie setting logic inside loginUser function, using 'data'
@@ -93,9 +111,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
     }
   };
-  const logout = () => {
-    clearToken();
-    setUser(null);
+  const logout = async () => {
+    try {
+      await logoutService();
+    } catch (err) {
+      console.error("Logout error:", err);
+    } finally {
+      clearToken();
+      setUser(null);
+    }
   };
 
   return (

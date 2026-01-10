@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Upload, FileText, X, CheckCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { uploadCV } from "@/services/cv.service";
+import { withRetryAndToast } from "@/lib/api-helpers";
 
 const MAX_SIZE = 5 * 1024 * 1024; // 5MB
 const ALLOWED_TYPES = [
@@ -14,10 +17,12 @@ const ALLOWED_TYPES = [
 ];
 
 export function CvUpload() {
+  const router = useRouter();
   const [file, setFile] = useState<File | null>(null);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
   const [uploaded, setUploaded] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const validateFile = (file: File) => {
     if (!ALLOWED_TYPES.includes(file.type)) {
@@ -38,23 +43,60 @@ export function CvUpload() {
 
     setError("");
     setFile(file);
-    fakeUpload();
   };
 
-  const fakeUpload = () => {
+  const handleUpload = async () => {
+    if (!file) return;
+
+    setIsUploading(true);
     setUploaded(false);
     setProgress(0);
+    setError("");
 
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setUploaded(true);
-          return 100;
+    try {
+      // Simulate progress (you can use axios onUploadProgress for real progress)
+      const progressInterval = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 90) {
+            clearInterval(progressInterval);
+            return 90;
+          }
+          return prev + 10;
+        });
+      }, 200);
+
+      const response = await withRetryAndToast(
+        () => uploadCV(file),
+        {
+          successMessage: "CV uploaded successfully",
+          errorMessage: "Failed to upload CV",
+          showLoading: true,
+          retryOptions: {
+            maxRetries: 2,
+            retryDelay: 2000,
+          },
         }
-        return prev + 10;
-      });
-    }, 200);
+      );
+      
+      clearInterval(progressInterval);
+      setProgress(100);
+      setUploaded(true);
+
+      // Redirect to CV builder with the uploaded CV ID
+      if (response.data.success && response.data.data) {
+        const cvId = response.data.data.id;
+        setTimeout(() => {
+          router.push(`/cv-builder/${cvId}`);
+        }, 1000);
+      }
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.message || "Failed to upload CV";
+      setError(errorMessage);
+      setProgress(0);
+      console.error("Error uploading CV:", err);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const reset = () => {
@@ -107,10 +149,10 @@ export function CvUpload() {
 
           <Button
             className="w-full"
-            disabled={!uploaded}
-            onClick={() => alert("Ready to send to API")}
+            disabled={!file || isUploading || uploaded}
+            onClick={handleUpload}
           >
-            Save CV
+            {isUploading ? "Uploading..." : uploaded ? "Uploaded!" : "Upload CV"}
           </Button>
         </div>
       )}
