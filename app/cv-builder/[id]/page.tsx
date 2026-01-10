@@ -24,6 +24,8 @@ import { CertificationSection } from "../../_components/cv-builder/certification
 import { CVPreview } from "../../_components/cv-preview";
 import { ArrowLeft, Save } from "lucide-react";
 import type { CV, UserProfile } from "@/types/types";
+import { getCVById, createCV, updateCV } from "@/services/cv.service";
+import { withRetryAndToast } from "@/lib/api-helpers";
 
 export default function CVBuilderPage() {
   const router = useRouter();
@@ -37,12 +39,14 @@ export default function CVBuilderPage() {
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     personalInfo: {
-      firstName: "",
-      lastName: "",
+      profileSetting: {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        country: "",
+      },
       headline: "",
-      email: "",
-      phone: "",
-      country: "",
       links: [],
     },
     professionalSummary: "",
@@ -56,6 +60,7 @@ export default function CVBuilderPage() {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoadingCV, setIsLoadingCV] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -64,69 +69,212 @@ export default function CVBuilderPage() {
     }
 
     if (!loading && user) {
-      // Load existing CV or initialize with profile data
-      const storedCvs = localStorage.getItem("cvs");
-      const cvs: CV[] = storedCvs ? JSON.parse(storedCvs) : [];
-      const existingCv = cvs.find((cv) => cv.id === cvId);
+      loadCV();
+    }
+  }, [user, loading, router, cvId]);
 
-      if (existingCv) {
-        setCvData(existingCv);
-      } else {
-        // Initialize with user profile data
-        const storedProfile = localStorage.getItem("user_profile");
-        if (storedProfile) {
-          const profile: UserProfile = JSON.parse(storedProfile);
-          setCvData((prev: CV) => ({
-            ...prev,
-            personalInfo: profile,
-          }));
-        } else if (user) {
+  const loadCV = async () => {
+    try {
+      setIsLoadingCV(true);
+      // Try to load existing CV from API
+      const response = await withRetryAndToast(
+        () => getCVById(cvId),
+        {
+          errorMessage: "Failed to load CV",
+          retryOptions: {
+            maxRetries: 2,
+            retryCondition: (error: any) => {
+              // Don't retry on 404 (CV doesn't exist)
+              return error?.response?.status !== 404;
+            },
+          },
+        }
+      );
+      if (response.data.success && response.data.data) {
+        setCvData(response.data.data);
+      }
+    } catch (err: any) {
+      // CV doesn't exist (404) or other error
+      if (err?.response?.status === 404) {
+        // Initialize with user profile data for new CV
+        if (user) {
           setCvData((prev: CV) => ({
             ...prev,
             personalInfo: {
-              firstName: user.firstName ?? "",
-              lastName: user.lastName ?? "",
+              profileSetting: {
+                firstName: user.firstName ?? "",
+                lastName: user.lastName ?? "",
+                email: user.email,
+                phone: prev.personalInfo?.profileSetting?.phone ?? "",
+                country: prev.personalInfo?.profileSetting?.country ?? "",
+              },
               headline: prev.personalInfo?.headline ?? "",
-              email: user.email,
-              phone: prev.personalInfo?.phone ?? "",
-              country: prev.personalInfo?.country ?? "",
               links: prev.personalInfo?.links ?? [],
             },
           }));
         }
+      } else {
+        console.error("Error loading CV:", err);
       }
+    } finally {
+      setIsLoadingCV(false);
     }
-  }, [user, loading, router, cvId]);
-
-  const handleSave = () => {
-    setIsSaving(true);
-
-    // Update timestamp
-    const updatedCv = {
-      ...cvData,
-      updatedAt: new Date().toISOString(),
-    };
-
-    // Save to localStorage
-    const storedCvs = localStorage.getItem("cvs");
-    const cvs: CV[] = storedCvs ? JSON.parse(storedCvs) : [];
-    const existingIndex = cvs.findIndex((cv) => cv.id === cvId);
-
-    if (existingIndex >= 0) {
-      cvs[existingIndex] = updatedCv;
-    } else {
-      cvs.push(updatedCv);
-    }
-
-    localStorage.setItem("cvs", JSON.stringify(cvs));
-    setCvData(updatedCv);
-
-    setTimeout(() => {
-      setIsSaving(false);
-    }, 500);
   };
 
-  if (loading) {
+  const handleSave = async () => {
+    setIsSaving(true);
+
+    let updatedCv: any = null;
+
+    try {
+      // Fields that should NOT be sent to the API (backend-only fields)
+      const fieldsToExclude = [
+        'id', 'createdAt', 'updatedAt', 
+        'metadata', 'settings', '_id', 'userId', 'status', 'source', 
+        'tags', 'parsingStatus', 'isParsed', 'parsingProgress', '__v',
+        'wordCount', 'sectionCount', 'viewCount', 'downloadCount', 
+        'shareCount', 'favoriteCount', 'isPublic', 'seoKeywords',
+        'theme', 'language', 'fontSize', 'pageFormat', 'margins'
+      ];
+
+      // Prepare CV data - only include fields that should be sent
+      const { id, createdAt, updatedAt, ...cvDataToSend } = cvData;
+      
+      // Clean up data - only include valid CV fields
+      const cleanedData: any = {};
+      
+      // List of valid CV fields that can be sent to API
+      const validFields = [
+        'title', 
+        'template', 
+        'personalInfo', 
+        'professionalSummary', 
+        'workExperience', 
+        'education', 
+        'skills', 
+        'projects', 
+        'languages', 
+        'certifications'
+      ];
+
+      validFields.forEach((key) => {
+        const value = (cvDataToSend as any)[key];
+        if (value !== undefined && value !== null) {
+          // Remove any backend-only fields from nested objects
+          if (typeof value === 'object' && !Array.isArray(value)) {
+            const cleanedValue: any = {};
+            Object.keys(value).forEach((subKey) => {
+              if (!fieldsToExclude.includes(subKey)) {
+                const subValue = value[subKey];
+                // Clean nested objects (like profileSetting)
+                if (typeof subValue === 'object' && subValue !== null && !Array.isArray(subValue)) {
+                  const cleanedSubValue: any = {};
+                  Object.keys(subValue).forEach((nestedKey) => {
+                    if (!fieldsToExclude.includes(nestedKey)) {
+                      // Include all fields from profileSetting, even if empty
+                      cleanedSubValue[nestedKey] = subValue[nestedKey];
+                    }
+                  });
+                  // Always include profileSetting even if empty
+                  if (subKey === 'profileSetting' || Object.keys(cleanedSubValue).length > 0) {
+                    cleanedValue[subKey] = cleanedSubValue;
+                  }
+                } else {
+                  cleanedValue[subKey] = subValue;
+                }
+              }
+            });
+            // Always include personalInfo even if empty
+            if (Object.keys(cleanedValue).length > 0 || key === 'personalInfo') {
+              cleanedData[key] = cleanedValue;
+            }
+          } else if (Array.isArray(value)) {
+            // Clean arrays - remove backend-only fields from array items
+            cleanedData[key] = value.map((item: any) => {
+              if (typeof item === 'object' && item !== null) {
+                const cleanedItem: any = {};
+                Object.keys(item).forEach((itemKey) => {
+                  if (!fieldsToExclude.includes(itemKey)) {
+                    cleanedItem[itemKey] = item[itemKey];
+                  }
+                });
+                return cleanedItem;
+              }
+              return item;
+            });
+          } else {
+            cleanedData[key] = value;
+          }
+        }
+      });
+
+      updatedCv = cleanedData;
+
+      // Log the data being sent for debugging
+      console.log("Sending CV data:", JSON.stringify(updatedCv, null, 2));
+
+      // Check if CV exists by trying to get it
+      try {
+        await getCVById(cvId);
+        // CV exists, update it
+        const response = await withRetryAndToast(
+          () => updateCV(cvId, updatedCv),
+          {
+            successMessage: "CV saved successfully",
+            errorMessage: "Failed to save CV",
+            retryOptions: {
+              maxRetries: 2,
+            },
+          }
+        );
+        if (response.data.success && response.data.data) {
+          const savedCv = response.data.data;
+          setCvData(savedCv);
+          // Update URL if ID changed (shouldn't happen, but just in case)
+          if (savedCv.id !== cvId) {
+            router.replace(`/cv-builder/${savedCv.id}`);
+          }
+        }
+      } catch (err: any) {
+        if (err?.response?.status === 404) {
+          // CV doesn't exist, create it
+          const response = await withRetryAndToast(
+            () => createCV(updatedCv),
+            {
+              successMessage: "CV created successfully",
+              errorMessage: "Failed to create CV",
+              retryOptions: {
+                maxRetries: 2,
+              },
+            }
+          );
+          if (response.data.success && response.data.data) {
+            const newCv = response.data.data;
+            setCvData(newCv);
+            // Update URL with the real ID from backend
+            if (newCv.id !== cvId) {
+              router.replace(`/cv-builder/${newCv.id}`);
+            }
+          }
+        } else {
+          throw err;
+        }
+      }
+    } catch (err: any) {
+      console.error("Error saving CV:", err);
+      // Error is already handled by withRetryAndToast, but log details for debugging
+      if (err?.response?.data) {
+        console.error("API Error Details:", JSON.stringify(err.response.data, null, 2));
+      }
+      if (err?.response?.status === 400 && updatedCv) {
+        console.error("Bad Request - Request payload:", JSON.stringify(updatedCv, null, 2));
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (loading || isLoadingCV) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
