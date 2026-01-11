@@ -9,7 +9,7 @@ function PersonalData({ data }: MinimalTemplateProps) {
     <div className="mb-5 flex flex-col items-center pb-3 text-center sm:mb-4 sm:pb-2">
       <h1 className="text-2xl font-bold flex flex-col items-center gap-1 sm:text-3xl sm:gap-2">
         <span>
-          {data.personalInfo?.firstName} {data.personalInfo?.lastName}
+          {data.personalInfo?.profileSetting?.firstName} {data.personalInfo?.profileSetting?.lastName}
         </span>
         {data.personalInfo?.headline && (
           <span className="text-base font-semibold text-black">
@@ -19,19 +19,19 @@ function PersonalData({ data }: MinimalTemplateProps) {
       </h1>
 
       <div className="mt-3 flex flex- flex-wrap justify-center items-center gap-2 text-xs text-black sm:mt-1 sm:text-sm font-bold">
-        {data.personalInfo?.email && (
-          <span className="break-all">{data.personalInfo?.email}</span>
+        {data.personalInfo?.profileSetting?.email && (
+          <span className="break-all">{data.personalInfo?.profileSetting?.email}</span>
         )}
-        {data.personalInfo?.phone && (
+        {data.personalInfo?.profileSetting?.phone && (
           <>
             <span>|</span>
-            <span>{data.personalInfo.phone}</span>
+            <span>{data.personalInfo.profileSetting.phone}</span>
           </>
         )}
-        {data.personalInfo?.country && (
+        {data.personalInfo?.profileSetting?.country && (
           <>
             <span>|</span>
-            <span>{data.personalInfo.country}</span>
+            <span>{data.personalInfo.profileSetting.country}</span>
           </>
         )}
 

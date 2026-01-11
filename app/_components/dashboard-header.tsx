@@ -105,7 +105,7 @@ export function DashboardHeader() {
                   <Link href="/profile-setup"> Profile Settings</Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout} className="text-destructive">
+                <DropdownMenuItem onClick={() => logout()} className="text-destructive">
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
@@ -202,8 +202,8 @@ export function DashboardHeader() {
                     Profile Settings
                   </Link>
                   <button
-                    onClick={() => {
-                      logout();
+                    onClick={async () => {
+                      await logout();
                       closeMobileMenu();
                     }}
                     className="flex items-center gap-2 text-sm font-medium py-2 text-destructive hover:text-destructive/90 transition w-full text-left"

@@ -20,7 +20,7 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
       <header className="border-b px-4 py-4 text-center sm:px-8 sm:py-5">
         <h1 className="text-xl font-bold capitalize flex flex-col gap-1 sm:text-3xl sm:gap-2">
           <span>
-            {data.personalInfo?.firstName} {data.personalInfo?.lastName}
+            {data.personalInfo?.profileSetting?.firstName} {data.personalInfo?.profileSetting?.lastName}
           </span>
           {data.personalInfo?.headline && (
             <span className="text-sm font-normal text-gray-600 sm:text-lg sm:text-gray-700">
@@ -41,29 +41,29 @@ export function ModernTemplate({ data }: TwoColumnTemplateProps) {
             </h2>
 
             <div className="space-y-2.5 text-xs sm:space-y-3 sm:text-sm">
-              {data.personalInfo?.email && (
+              {data.personalInfo?.profileSetting?.email && (
                 <div className="flex items-start gap-2">
                   <Mail className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="break-all leading-relaxed">
-                    {data.personalInfo.email}
+                    {data.personalInfo.profileSetting.email}
                   </span>
                 </div>
               )}
 
-              {data.personalInfo?.phone && (
+              {data.personalInfo?.profileSetting?.phone && (
                 <div className="flex items-start gap-2">
                   <Phone className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="leading-relaxed">
-                    {data.personalInfo.phone}
+                    {data.personalInfo.profileSetting.phone}
                   </span>
                 </div>
               )}
 
-              {data.personalInfo?.country && (
+              {data.personalInfo?.profileSetting?.country && (
                 <div className="flex items-start gap-2">
                   <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-gray-500 sm:h-4 sm:w-4" />
                   <span className="leading-relaxed">
-                    {data.personalInfo.country}
+                    {data.personalInfo.profileSetting.country}
                   </span>
                 </div>
               )}

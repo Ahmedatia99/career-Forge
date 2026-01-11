@@ -7,12 +7,18 @@ import { DashboardHeader } from "../_components/dashboard-header";
 import { CVCard } from "../_components/cv-card";
 import { Button } from "@/components/ui/button";
 import { Plus, FileText } from "lucide-react";
-import type { CV } from "@/lib/types";
+import { getUserCVs, deleteCV, createCV } from "@/services/cv.service";
+import { withRetryAndToast } from "@/lib/api-helpers";
+import { createListOptimisticHandler } from "@/lib/optimistic-updates";
+import type { CV } from "@/types/types";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, loading } = useAuth();
   const [cvs, setCvs] = useState<CV[]>([]);
+  const [isLoadingCVs, setIsLoadingCVs] = useState(false);
+  const [isCreatingCV, setIsCreatingCV] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -20,23 +26,92 @@ export default function DashboardPage() {
       return;
     }
 
-    // Load CVs from localStorage
-    const storedCvs = localStorage.getItem("cvs");
-    if (storedCvs) {
-      setCvs(JSON.parse(storedCvs));
+    if (user) {
+      loadCVs();
     }
   }, [user, loading, router]);
 
-  const handleCreateCV = () => {
-    // Generate a new CV ID
-    const newCvId = Math.random().toString(36).substr(2, 9);
-    router.push(`/cv-builder/${newCvId}`);
+  const loadCVs = async () => {
+    try {
+      setIsLoadingCVs(true);
+      setError(null);
+      const response = await withRetryAndToast(
+        () => getUserCVs(),
+        {
+          errorMessage: "Failed to load CVs",
+          retryOptions: {
+            maxRetries: 2,
+            retryDelay: 1000,
+          },
+        }
+      );
+      if (response.data.success && response.data.data) {
+        setCvs(response.data.data);
+      }
+    } catch (err: any) {
+      setError(err?.response?.data?.message || "Failed to load CVs");
+      console.error("Error loading CVs:", err);
+    } finally {
+      setIsLoadingCVs(false);
+    }
   };
 
-  const handleDeleteCV = (id: string) => {
-    const updatedCvs = cvs.filter((cv) => cv.id !== id);
-    setCvs(updatedCvs);
-    localStorage.setItem("cvs", JSON.stringify(updatedCvs));
+  const handleCreateCV = async () => {
+    try {
+      setIsCreatingCV(true);
+      // Create CV in backend first to get the real ID from response
+      const response = await withRetryAndToast(
+        () => createCV({
+          title: "Untitled CV",
+          template: "minimal",
+        }),
+        {
+          successMessage: "CV created successfully",
+          errorMessage: "Failed to create CV",
+          retryOptions: {
+            maxRetries: 2,
+          },
+        }
+      );
+      
+      if (response.data.success && response.data.data) {
+        const cvId = response.data.data.id;
+        // Navigate to CV builder with the real ID from backend
+        router.push(`/cv-builder/${cvId}`);
+      }
+    } catch (err: any) {
+      console.error("Error creating CV:", err);
+    } finally {
+      setIsCreatingCV(false);
+    }
+  };
+
+  const handleDeleteCV = async (id: string) => {
+    const cvToDelete = cvs.find((cv) => cv.id === id);
+    if (!cvToDelete) return;
+
+    const optimisticHandler = createListOptimisticHandler<CV>(cvs);
+    const optimisticCvs = optimisticHandler.delete(id);
+
+    // Optimistic update
+    setCvs(optimisticCvs);
+
+    try {
+      await withRetryAndToast(
+        () => deleteCV(id),
+        {
+          successMessage: "CV deleted successfully",
+          errorMessage: "Failed to delete CV",
+          retryOptions: {
+            maxRetries: 2,
+          },
+        }
+      );
+    } catch (err: any) {
+      // Rollback on error
+      setCvs(cvs);
+      console.error("Error deleting CV:", err);
+    }
   };
 
   if (loading) {
@@ -60,13 +135,28 @@ export default function DashboardPage() {
               Create and manage your professional CVs
             </p>
           </div>
-          <Button onClick={handleCreateCV} size="lg" className="gap-2">
+          <Button 
+            onClick={handleCreateCV} 
+            size="lg" 
+            className="gap-2"
+            disabled={isCreatingCV}
+          >
             <Plus className="h-5 w-5" />
-            Create CV
+            {isCreatingCV ? "Creating..." : "Create CV"}
           </Button>
         </div>
 
-        {cvs.length === 0 ? (
+        {error && (
+          <div className="mb-4 rounded-lg bg-destructive/10 p-4 text-destructive">
+            {error}
+          </div>
+        )}
+
+        {isLoadingCVs ? (
+          <div className="flex min-h-[400px] items-center justify-center">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          </div>
+        ) : cvs.length === 0 ? (
           <div className="flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-border bg-muted/30 py-20">
             <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <FileText className="h-8 w-8 text-primary" />
@@ -75,9 +165,14 @@ export default function DashboardPage() {
             <p className="mb-6 text-center text-muted-foreground">
               Get started by creating your first professional CV
             </p>
-            <Button onClick={handleCreateCV} size="lg" className="gap-2">
+            <Button 
+              onClick={handleCreateCV} 
+              size="lg" 
+              className="gap-2"
+              disabled={isCreatingCV}
+            >
               <Plus className="h-5 w-5" />
-              Create Your First CV
+              {isCreatingCV ? "Creating..." : "Create Your First CV"}
             </Button>
           </div>
         ) : (
