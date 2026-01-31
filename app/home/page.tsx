@@ -3,11 +3,11 @@ import { Hero } from "@/app/_components/home-page/hero";
 import { Features } from "@/app/_components/home-page/features";
 import { Footer } from "@/app/_components/home-page/footer";
 import { Steps } from "@/app/_components/home-page/steps";
-import { DashboardHeader } from "@/app/_components/dashboard-header";
+
 export default function LandingPage() {
   return (
     <main className="bg-background">
-      <DashboardHeader />
+      <Header />
       <Hero />
       <Features />
       <Steps />

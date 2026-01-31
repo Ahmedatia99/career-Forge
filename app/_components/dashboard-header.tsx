@@ -1,7 +1,18 @@
 "use client";
 import { useAuth } from "@/context/auth-context";
 import { Button } from "@/components/ui/button";
-import { FileText, LogOut, User, Menu, X } from "lucide-react";
+import {
+  FileText,
+  LogOut,
+  User,
+  Menu,
+  X,
+  BarChart3,
+  Clock,
+  Sparkles,
+  Settings,
+  Globe,
+} from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import Image from "next/image";
@@ -16,10 +27,10 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 export function DashboardHeader() {
-  const { user, logout, isLoading } = useAuth();
+  const { user, logout, loading } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  if (isLoading) return null;
+  if (loading) return null;
 
   const initials = user
     ? `${user.firstName[0]}${user.lastName[0]}`.toUpperCase()
@@ -39,6 +50,24 @@ export function DashboardHeader() {
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           <Link
+            href="/dashboard"
+            className="text-sm font-medium hover:text-primary transition"
+          >
+            Dashboard
+          </Link>
+          <Link
+            href="/ats"
+            className="text-sm font-medium hover:text-primary transition"
+          >
+            ATS Analysis
+          </Link>
+          <Link
+            href="/jobs"
+            className="text-sm font-medium hover:text-primary transition"
+          >
+            Jobs
+          </Link>
+          <Link
             href="/features"
             className="text-sm font-medium hover:text-primary transition"
           >
@@ -49,18 +78,6 @@ export function DashboardHeader() {
             className="text-sm font-medium hover:text-primary transition"
           >
             Pricing
-          </Link>
-          <Link
-            href="/about"
-            className="text-sm font-medium hover:text-primary transition"
-          >
-            About
-          </Link>
-          <Link
-            href="/contact"
-            className="text-sm font-medium hover:text-primary transition"
-          >
-            Contact
           </Link>
         </nav>
 
@@ -100,12 +117,29 @@ export function DashboardHeader() {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <User className="mr-2 h-4 w-4" />
-                  <Link href="/profile-setup"> Profile Settings</Link>
+                <DropdownMenuItem asChild>
+                  <Link href="/profile-setup" className="flex items-center">
+                    <User className="mr-2 h-4 w-4" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/settings" className="flex items-center">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/webhooks" className="flex items-center">
+                    <Globe className="mr-2 h-4 w-4" />
+                    Webhooks
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => logout()} className="text-destructive">
+                <DropdownMenuItem
+                  onClick={() => logout()}
+                  className="text-destructive"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </DropdownMenuItem>
@@ -135,6 +169,27 @@ export function DashboardHeader() {
         <div className="md:hidden border-t bg-card">
           <nav className="container mx-auto flex flex-col px-4 py-4 space-y-4">
             <Link
+              href="/dashboard"
+              className="text-sm font-medium hover:text-primary transition py-2"
+              onClick={closeMobileMenu}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/ats"
+              className="text-sm font-medium hover:text-primary transition py-2"
+              onClick={closeMobileMenu}
+            >
+              ATS Analysis
+            </Link>
+            <Link
+              href="/jobs"
+              className="text-sm font-medium hover:text-primary transition py-2"
+              onClick={closeMobileMenu}
+            >
+              Jobs
+            </Link>
+            <Link
               href="/features"
               className="text-sm font-medium hover:text-primary transition py-2"
               onClick={closeMobileMenu}
@@ -147,20 +202,6 @@ export function DashboardHeader() {
               onClick={closeMobileMenu}
             >
               Pricing
-            </Link>
-            <Link
-              href="/about"
-              className="text-sm font-medium hover:text-primary transition py-2"
-              onClick={closeMobileMenu}
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-medium hover:text-primary transition py-2"
-              onClick={closeMobileMenu}
-            >
-              Contact
             </Link>
 
             <div className="border-t pt-4">
