@@ -8,7 +8,8 @@ interface TechTextProps {
 }
 
 export function TechText({ text, className }: TechTextProps) {
-  const segments = parseTextWithTechKeywords(text)
+  const safeText = text != null && typeof text === "string" ? text : "";
+  const segments = parseTextWithTechKeywords(safeText);
 
   return (
     <span className={className}>

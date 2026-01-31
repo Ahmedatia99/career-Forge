@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { extractData } from "@/lib/api-helpers";
 import type { CV } from "@/types/types";
 
 export interface CVVersion {
@@ -36,6 +37,14 @@ export const listCVVersions = (cvId: string) => {
 };
 
 /**
+ * Get CV versions using extractData helper
+ */
+export const getCVVersions = async (cvId: string) => {
+  const response = await api.get(`/v1/cvs/${cvId}/versions`);
+  return extractData(response);
+};
+
+/**
  * Create a snapshot version of the current CV state
  */
 export const createCVVersion = (cvId: string, data: CreateCVVersionRequest) => {
@@ -52,6 +61,7 @@ export const getCVVersion = (cvId: string, versionId: string) => {
 /**
  * Activate/restore a version (restores main CV to this version's state)
  */
-export const activateCVVersion = (cvId: string, versionId: string) => {
-  return api.post<CVVersionResponse>(`/v1/cvs/${cvId}/versions/${versionId}/activate`, {});
+export const activateCVVersion = async (cvId: string, versionId: string) => {
+  const response = await api.post(`/v1/cvs/${cvId}/versions/${versionId}/activate`, {});
+  return response.data;
 };

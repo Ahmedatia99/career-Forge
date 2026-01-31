@@ -65,19 +65,16 @@ export function CvUpload() {
         });
       }, 200);
 
-      const response = await withRetryAndToast(
-        () => uploadCV(file),
-        {
-          successMessage: "CV uploaded successfully",
-          errorMessage: "Failed to upload CV",
-          showLoading: true,
-          retryOptions: {
-            maxRetries: 2,
-            retryDelay: 2000,
-          },
-        }
-      );
-      
+      const response = await withRetryAndToast(() => uploadCV(file), {
+        successMessage: "CV uploaded successfully",
+        errorMessage: "Failed to upload CV",
+        showLoading: true,
+        retryOptions: {
+          maxRetries: 2,
+          retryDelay: 2000,
+        },
+      });
+
       clearInterval(progressInterval);
       setProgress(100);
       setUploaded(true);
@@ -90,7 +87,8 @@ export function CvUpload() {
         }, 1000);
       }
     } catch (err: any) {
-      const errorMessage = err?.response?.data?.message || "Failed to upload CV";
+      const errorMessage =
+        err?.response?.data?.message || "Failed to upload CV";
       setError(errorMessage);
       setProgress(0);
       console.error("Error uploading CV:", err);
@@ -152,7 +150,11 @@ export function CvUpload() {
             disabled={!file || isUploading || uploaded}
             onClick={handleUpload}
           >
-            {isUploading ? "Uploading..." : uploaded ? "Uploaded!" : "Upload CV"}
+            {isUploading
+              ? "Uploading..."
+              : uploaded
+              ? "Uploaded!"
+              : "Upload CV"}
           </Button>
         </div>
       )}

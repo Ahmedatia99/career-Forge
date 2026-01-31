@@ -6,7 +6,7 @@ import { useAuth } from "@/context/auth-context";
 import { DashboardHeader } from "../_components/dashboard-header";
 import { CVCard } from "../_components/cv-card";
 import { Button } from "@/components/ui/button";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Upload } from "lucide-react";
 import { getUserCVs, deleteCV, createCV } from "@/services/cv.service";
 import { withRetryAndToast } from "@/lib/api-helpers";
 import { createListOptimisticHandler } from "@/lib/optimistic-updates";
@@ -35,16 +35,13 @@ export default function DashboardPage() {
     try {
       setIsLoadingCVs(true);
       setError(null);
-      const response = await withRetryAndToast(
-        () => getUserCVs(),
-        {
-          errorMessage: "Failed to load CVs",
-          retryOptions: {
-            maxRetries: 2,
-            retryDelay: 1000,
-          },
-        }
-      );
+      const response = await withRetryAndToast(() => getUserCVs(), {
+        errorMessage: "Failed to load CVs",
+        retryOptions: {
+          maxRetries: 2,
+          retryDelay: 1000,
+        },
+      });
       if (response.data.success && response.data.data) {
         setCvs(response.data.data);
       }
@@ -59,28 +56,62 @@ export default function DashboardPage() {
   const handleCreateCV = async () => {
     try {
       setIsCreatingCV(true);
-      // Create CV in backend first to get the real ID from response
-      const response = await withRetryAndToast(
-        () => createCV({
-          title: "Untitled CV",
-          template: "minimal",
-        }),
-        {
-          successMessage: "CV created successfully",
-          errorMessage: "Failed to create CV",
-          retryOptions: {
-            maxRetries: 2,
+
+      // Create CV payload matching API expectations
+      const cvPayload = {
+        fileName: "Untitled_CV.pdf",
+        parsedData: {
+          personalInfo: {
+            fullName:
+              user?.firstName && user?.lastName
+                ? `${user.firstName} ${user.lastName}`
+                : "New User",
+            email: user?.email || "user@example.com",
+            phone: "+1234567890",
+            location: "City, Country",
           },
-        }
-      );
-      
+          professionalSummary: "Professional summary goes here.",
+          experience: [
+            {
+              title: "Job Title",
+              company: "Company Name",
+              startDate: "2024-01",
+              endDate: "Present",
+            },
+          ],
+          education: [
+            {
+              degree: "Bachelor's Degree",
+              school: "University Name",
+              year: "2023",
+            },
+          ],
+          skills: ["Skill 1", "Skill 2"],
+        },
+      };
+
+      const response = await withRetryAndToast(() => createCV(cvPayload), {
+        successMessage: "CV created successfully",
+        errorMessage: "Failed to create CV",
+        retryOptions: {
+          maxRetries: 1,
+          retryCondition: (error: any) => {
+            const status = error?.response?.status;
+            return !status || (status >= 500 && status < 600);
+          },
+        },
+      });
+
       if (response.data.success && response.data.data) {
         const cvId = response.data.data.id;
         // Navigate to CV builder with the real ID from backend
         router.push(`/cv-builder/${cvId}`);
       }
     } catch (err: any) {
-      console.error("Error creating CV:", err);
+      // If API fails, redirect to CV builder with a temporary ID
+      // This allows the user to still create and edit CV locally
+      const tempId = `temp-${Date.now()}`;
+      router.push(`/cv-builder/${tempId}`);
     } finally {
       setIsCreatingCV(false);
     }
@@ -97,16 +128,13 @@ export default function DashboardPage() {
     setCvs(optimisticCvs);
 
     try {
-      await withRetryAndToast(
-        () => deleteCV(id),
-        {
-          successMessage: "CV deleted successfully",
-          errorMessage: "Failed to delete CV",
-          retryOptions: {
-            maxRetries: 2,
-          },
-        }
-      );
+      await withRetryAndToast(() => deleteCV(id), {
+        successMessage: "CV deleted successfully",
+        errorMessage: "Failed to delete CV",
+        retryOptions: {
+          maxRetries: 2,
+        },
+      });
     } catch (err: any) {
       // Rollback on error
       setCvs(cvs);
@@ -135,15 +163,26 @@ export default function DashboardPage() {
               Create and manage your professional CVs
             </p>
           </div>
-          <Button 
-            onClick={handleCreateCV} 
-            size="lg" 
-            className="gap-2"
-            disabled={isCreatingCV}
-          >
-            <Plus className="h-5 w-5" />
-            {isCreatingCV ? "Creating..." : "Create CV"}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              onClick={() => router.push("/upload")}
+              variant="outline"
+              size="lg"
+              className="gap-2"
+            >
+              <Upload className="h-5 w-5" />
+              Upload CV
+            </Button>
+            <Button
+              onClick={handleCreateCV}
+              size="lg"
+              className="gap-2"
+              disabled={isCreatingCV}
+            >
+              <Plus className="h-5 w-5" />
+              {isCreatingCV ? "Creating..." : "Create CV"}
+            </Button>
+          </div>
         </div>
 
         {error && (
@@ -165,9 +204,9 @@ export default function DashboardPage() {
             <p className="mb-6 text-center text-muted-foreground">
               Get started by creating your first professional CV
             </p>
-            <Button 
-              onClick={handleCreateCV} 
-              size="lg" 
+            <Button
+              onClick={handleCreateCV}
+              size="lg"
               className="gap-2"
               disabled={isCreatingCV}
             >

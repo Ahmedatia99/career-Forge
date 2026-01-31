@@ -1,9 +1,6 @@
 import type { CV } from "@/types/types";
-import { Mail, Phone, MapPin, LinkIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { TechText } from "./tech-text";
-// import { parseSkills } from "@/lib/skills-utils";
-import { formatDate } from "@/utils/formatDate";
 import PersonalData from "./professional-template/PersonalData";
 import Summery from "./professional-template/Summery";
 import Experience from "./professional-template/Experience";
@@ -17,11 +14,6 @@ interface ProfessionalTemplateProps {
 }
 
 export function ProfessionalTemplate({ data }: ProfessionalTemplateProps) {
-  formatDate(data);
-
-  // Parse skills to handle comma-separated values
-  // const parsedSkills = parseSkills(data.skills);
-
   return (
     <div className="bg-white text-gray-900 shadow-lg">
       {/* Header */}

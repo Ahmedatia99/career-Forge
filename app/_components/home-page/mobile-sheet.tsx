@@ -1,3 +1,4 @@
+"use client";
 import {
   Sheet,
   SheetContent,
@@ -6,12 +7,26 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import {Menu} from "lucide-react";
+import { Menu, User, Settings, LogOut, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { useAuth } from "@/context/auth-context";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
 
 export function MobileSheet() {
   const [open, setOpen] = useState(false);
+  const { user, logout, loading } = useAuth();
+
+  const initials = user
+    ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`.toUpperCase() ||
+      "U"
+    : "U";
+
+  const handleLogout = async () => {
+    await logout();
+    setOpen(false);
+  };
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -37,23 +52,43 @@ export function MobileSheet() {
           </SheetTitle>
         </SheetHeader>
 
-        <nav className="flex flex-col gap-4 px-4">
+        {/* User info if logged in */}
+        {!loading && user && (
+          <div className="px-4 py-4">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                <AvatarImage src="/placeholder.svg" alt={user?.firstName} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div>
+                <p className="text-sm font-medium">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="text-xs text-muted-foreground">{user?.email}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        <nav className="flex flex-col gap-1 px-4">
           <Link
-            href="#features"
+            href="/features"
             className="text-base font-medium hover:text-primary transition py-2"
             onClick={() => setOpen(false)}
           >
             Features
           </Link>
           <Link
-            href="#pricing"
+            href="/pricing"
             className="text-base font-medium hover:text-primary transition py-2"
             onClick={() => setOpen(false)}
           >
             Pricing
           </Link>
           <Link
-            href="#about"
+            href="/about"
             className="text-base font-medium hover:text-primary transition py-2"
             onClick={() => setOpen(false)}
           >
@@ -61,24 +96,66 @@ export function MobileSheet() {
           </Link>
         </nav>
 
-        <div className="flex flex-col gap-3 mt-6 px-4">
-          <Button
-            asChild
-            variant="outline"
-            className="w-full border-primary text-primary rounded-full bg-transparent"
-          >
-            <Link href="/login" onClick={() => setOpen(false)}>
-              Login
-            </Link>
-          </Button>
+        <Separator className="my-4" />
 
-          <Button
-            className="w-full rounded-full"
-            onClick={() => setOpen(false)}
-          >
-            <Link href="/">Create CV</Link>
-          </Button>
-        </div>
+        {loading ? (
+          <div className="px-4">
+            <div className="h-10 w-full animate-pulse rounded-full bg-muted" />
+          </div>
+        ) : user ? (
+          <div className="flex flex-col gap-1 px-4">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 text-base font-medium hover:text-primary transition py-2"
+              onClick={() => setOpen(false)}
+            >
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Link>
+            <Link
+              href="/profile-setup"
+              className="flex items-center gap-2 text-base font-medium hover:text-primary transition py-2"
+              onClick={() => setOpen(false)}
+            >
+              <User className="h-4 w-4" />
+              Profile
+            </Link>
+            <Link
+              href="/settings"
+              className="flex items-center gap-2 text-base font-medium hover:text-primary transition py-2"
+              onClick={() => setOpen(false)}
+            >
+              <Settings className="h-4 w-4" />
+              Settings
+            </Link>
+            <Separator className="my-2" />
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 text-base font-medium text-destructive hover:text-destructive/90 transition py-2 w-full text-left"
+            >
+              <LogOut className="h-4 w-4" />
+              Log out
+            </button>
+          </div>
+        ) : (
+          <div className="flex flex-col gap-3 px-4">
+            <Button
+              asChild
+              variant="outline"
+              className="w-full border-primary text-primary rounded-full bg-transparent"
+            >
+              <Link href="/login" onClick={() => setOpen(false)}>
+                Login
+              </Link>
+            </Button>
+
+            <Button asChild className="w-full rounded-full">
+              <Link href="/signup" onClick={() => setOpen(false)}>
+                Create CV
+              </Link>
+            </Button>
+          </div>
+        )}
       </SheetContent>
     </Sheet>
   );

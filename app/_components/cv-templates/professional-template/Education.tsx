@@ -39,7 +39,7 @@ function Education({ data }: MinimalTemplateProps) {
                 </div>
                 {edu.description && (
                   <p className="mt-2 text-xs leading-relaxed text-gray-700 sm:text-sm">
-                    <TechText text={edu.description} />
+                    <TechText text={edu.description ?? ""} />
                   </p>
                 )}
               </div>

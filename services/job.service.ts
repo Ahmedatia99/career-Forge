@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { extractData } from "@/lib/api-helpers";
 
 export type JobType = "parsing" | "optimization" | "ats-analysis" | "pdf-generation";
 
@@ -57,22 +58,83 @@ export interface JobLogsResponse {
 /**
  * List all background jobs for the user
  */
-export const listJobs = () => {
-  return api.get<JobListResponse>("/v1/jobs");
+export const listJobs = async (options: { type?: JobType; status?: JobStatus; limit?: number } = {}) => {
+  const response = await api.get('/v1/jobs', { params: options });
+  const rawData = extractData<any>(response);
+  
+  // Normalize to always return array
+  const data = Array.isArray(rawData) ? rawData : (rawData?.jobs || rawData?.data || []);
+  
+  // Normalize each job to ensure id is present
+  const normalizedData = data.map((job: any) => ({
+    ...job,
+    id: job.id || job._id || job.jobId,
+  }));
+  
+  return {
+    data: {
+      success: true,
+      data: normalizedData,
+    },
+  };
+};
+
+/**
+ * Get jobs with extractData helper
+ */
+export const getJobs = async (options: { type?: JobType; status?: JobStatus; limit?: number } = {}) => {
+  const response = await api.get('/v1/jobs', { params: options });
+  return extractData(response);
 };
 
 /**
  * Get overall job statistics
  */
-export const getJobStats = () => {
-  return api.get<JobStatsResponse>("/v1/jobs/stats");
+export const getJobStats = async () => {
+  try {
+    const response = await api.get('/v1/jobs/stats');
+    const rawData = extractData<any>(response);
+    
+    // Normalize stats structure
+    const stats = {
+      total: rawData?.total || rawData?.totalJobs || 0,
+      pending: rawData?.pending || rawData?.byStatus?.pending || 0,
+      processing: rawData?.processing || rawData?.byStatus?.processing || 0,
+      completed: rawData?.completed || rawData?.byStatus?.completed || 0,
+      failed: rawData?.failed || rawData?.byStatus?.failed || 0,
+      byType: rawData?.byType || {},
+    };
+    
+    return {
+      data: {
+        success: true,
+        data: stats,
+      },
+    };
+  } catch (err) {
+    // If stats endpoint fails, return empty stats
+    return {
+      data: {
+        success: true,
+        data: {
+          total: 0,
+          pending: 0,
+          processing: 0,
+          completed: 0,
+          failed: 0,
+          byType: {},
+        },
+      },
+    };
+  }
 };
 
 /**
  * Get details of a specific job
  */
-export const getJobDetails = (jobId: string) => {
-  return api.get<JobResponse>(`/v1/jobs/${jobId}`);
+export const getJobDetails = async (jobId: string) => {
+  const response = await api.get(`/v1/jobs/${jobId}`);
+  return extractData(response);
 };
 
 /**
@@ -85,13 +147,15 @@ export const getJobLogs = (jobId: string) => {
 /**
  * Cancel a pending/processing job
  */
-export const cancelJob = (jobId: string) => {
-  return api.delete(`/v1/jobs/${jobId}`);
+export const cancelJob = async (jobId: string) => {
+  const response = await api.delete(`/v1/jobs/${jobId}`);
+  return extractData(response);
 };
 
 /**
  * Retry a failed job
  */
-export const retryJob = (jobId: string) => {
-  return api.post<JobResponse>(`/v1/jobs/${jobId}/retry`);
+export const retryJob = async (jobId: string) => {
+  const response = await api.post(`/v1/jobs/${jobId}/retry`);
+  return extractData(response);
 };

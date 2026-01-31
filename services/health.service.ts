@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { extractData } from "@/lib/api-helpers";
 
 export interface HealthResponse {
   success: boolean;
@@ -29,6 +30,14 @@ export interface MetricsResponse {
  */
 export const healthCheck = () => {
   return api.get<HealthResponse>("/health");
+};
+
+/**
+ * Check API health using extractData helper
+ */
+export const checkHealth = async () => {
+  const response = await api.get('/v1/health');
+  return extractData(response);
 };
 
 /**
