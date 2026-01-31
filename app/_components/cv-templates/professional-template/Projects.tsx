@@ -31,14 +31,14 @@ function Projects({ data }: MinimalTemplateProps) {
                   )}
                 </div>
                 <p className="mt-1 text-xs leading-relaxed text-gray-700 sm:text-sm">
-                  <TechText text={project.description} />
+                  <TechText text={project.description ?? ""} />
                 </p>
-                {project.technologies.length > 0 && (
+                {(project.technologies ?? []).length > 0 && (
                   <div className="mt-2 flex flex-wrap items-center gap-1.5">
                     <span className="text-xs font-medium text-gray-600 sm:text-sm">
                       Technologies:
                     </span>
-                    {project.technologies.map((tech, index) => (
+                    {(project.technologies ?? []).map((tech, index) => (
                       <Badge
                         key={`${tech}-${index}`}
                         variant="outline"

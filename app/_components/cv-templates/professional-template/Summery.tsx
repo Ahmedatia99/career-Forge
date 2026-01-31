@@ -13,7 +13,7 @@ function Summery({ data }: MinimalTemplateProps) {
               Professional Summary
             </h2>
             <p className="leading-relaxed text-gray-700">
-              <TechText text={data.professionalSummary} />
+              <TechText text={data.professionalSummary ?? ""} />
             </p>
           </section>
         )}
