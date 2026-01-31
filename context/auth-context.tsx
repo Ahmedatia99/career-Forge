@@ -9,7 +9,12 @@ import {
   getToken,
 } from "@/lib/auth-storage";
 import { LoginResponse, AuthUser, RegisterResponse } from "@/types/auth-types";
-import { register, login, getCurrentUser, logout as logoutService } from "@/services/auth.service";
+import {
+  register,
+  login,
+  getCurrentUser,
+  logout as logoutService,
+} from "@/services/auth.service";
 import { RegisterFormData } from "@/types/types";
 
 interface AuthContextType {
@@ -70,31 +75,36 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const registerUser = async (
-    data: RegisterFormData
+    data: RegisterFormData,
   ): Promise<RegisterResponse> => {
     try {
       const res = await register(data);
 
       const result = res.data;
+      const payload = (res as any).payload;
 
       if (result.success && result.data) {
         // Save token and user
-        setToken({ token: result.data.token });
-        saveUser(result.data.user);
-        setUser(result.data.user);
+        if (result.data.token) {
+          setToken({ token: result.data.token });
+        }
+        if (result.data.user) {
+          saveUser(result.data.user);
+          setUser(result.data.user);
+        }
 
         return {
           success: true,
-          status: res.status || 200,
+          status: 200,
           message: result.message || "User registered successfully",
-          data: result.data,
+          data: result.data as any,
         };
       } else {
         return {
           success: false,
-          status: res.status || 400,
+          status: 400,
           message: result.message,
-          error: result.error || "Registration failed",
+          error: (result as any).error || "Registration failed",
         };
       }
     } catch (err: any) {

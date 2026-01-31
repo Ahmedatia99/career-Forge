@@ -30,12 +30,27 @@ export default function LoginPage() {
         email,
         password,
       });
-      const { token, refreshToken, user } = res.data.data;
-      loginUser(res.data.data);
+
+      // Handle the response data structure
+      const responseData = res.data.data;
+      const token = responseData.token;
+      const user = responseData.user;
+
+      // loginUser expects LoginResponse format
+      loginUser({
+        token,
+        refreshToken: responseData.refreshToken || token, // fallback if no refresh token
+        user,
+      });
 
       router.push("/dashboard");
     } catch (error: any) {
-      setError(error?.response?.message || "An error occurred during login.");
+      const errorMsg =
+        error?.response?.data?.message ||
+        error?.response?.data?.error?.message ||
+        error?.message ||
+        "An error occurred during login.";
+      setError(errorMsg);
     } finally {
       setIsLoading(false);
     }
