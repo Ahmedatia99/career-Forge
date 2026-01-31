@@ -3,6 +3,10 @@
     "app/api/export-pdf/route.ts": {
       "memory": 1024,
       "maxDuration": 10
+    },
+    "app/export-pdf/route.ts": {
+      "memory": 1024,
+      "maxDuration": 10
     }
   },
   "installCommand": "npm install",

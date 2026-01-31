@@ -1,27 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
+import { randomUUID } from "crypto";
 import { getPDFService } from "@/services/pdf-service";
+import { setPdfExportData } from "@/lib/pdf-export-store";
 import type { CV } from "@/types/types";
 
 /**
- * POST /api/export-pdf
- * Exports CV data to PDF format
- *
- * Request body:
- * {
- *   cvData: CV,
- *   options?: {
- *     format?: 'A4' | 'Letter',
- *     margin?: { top?, right?, bottom?, left? },
- *     printBackground?: boolean
- *   }
- * }
+ * POST /export-pdf
+ * Exports CV to PDF using Puppeteer. Stores CV by short id so URL is small (avoids 500).
  */
 export async function POST(request: NextRequest) {
+  let tid: string | undefined;
   try {
     const body = await request.json();
     const { cvData, options } = body;
 
-    // Validate CV data
     if (!cvData || typeof cvData !== "object") {
       return NextResponse.json(
         { error: "Invalid CV data provided" },
@@ -29,7 +21,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Use request origin so Puppeteer loads this app's /pdf-render (not an external API)
     const origin =
       request.nextUrl?.origin ??
       (request.headers.get("x-forwarded-proto") && request.headers.get("host")
@@ -37,11 +28,17 @@ export async function POST(request: NextRequest) {
         : null) ??
       "http://localhost:3000";
 
-    const pdfService = getPDFService();
-    const pdfBuffer = await pdfService.generatePDF(cvData as CV, options, origin);
+    tid = randomUUID();
+    setPdfExportData(tid, cvData as CV);
 
-    // Return PDF as response
-    // Convert Buffer to Uint8Array for NextResponse compatibility
+    const pdfService = getPDFService();
+    const pdfBuffer = await pdfService.generatePDF(
+      cvData as CV,
+      options,
+      origin,
+      tid
+    );
+
     const uint8Array = new Uint8Array(pdfBuffer);
 
     return new NextResponse(uint8Array, {
@@ -56,7 +53,6 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("PDF export error:", error);
-
     return NextResponse.json(
       {
         error: "Failed to generate PDF",
@@ -67,7 +63,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-// Handle unsupported methods
+
 export async function GET() {
   return NextResponse.json(
     { error: "Method not allowed. Use POST to export PDF." },

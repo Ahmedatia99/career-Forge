@@ -1,6 +1,4 @@
 import { launchBrowser } from "@/lib/puppeteer";
-
-
 import type { CV } from "@/types/types";
 import type { Browser } from "puppeteer-core";
 
@@ -64,12 +62,15 @@ private async getBrowser() {
 
 
   /**
-   * Generate PDF from CV data
-   * @param cvData - CV data to export
-   * @param options - PDF export options
-   * @returns PDF buffer
+   * Generate PDF from CV data. Uses short URL /pdf-render?tid=... so no long query (avoids 500).
+   * Waits for [data-pdf-ready] so the PDF contains the template, not the loading spinner.
    */
-  async generatePDF(cvData: CV, options?: PDFExportOptions): Promise<Buffer> {
+  async generatePDF(
+    cvData: CV,
+    options?: PDFExportOptions,
+    requestOrigin?: string | null,
+    tid?: string | null
+  ): Promise<Buffer> {
     const browser = await this.getBrowser();
     if (!browser) {
       throw new Error("Failed to launch browser");
@@ -82,40 +83,32 @@ private async getBrowser() {
         ...options,
       };
 
-      // Encode CV data for URL
-      const encodedData = encodeURIComponent(JSON.stringify(cvData));
-      
-      // Get the base URL - in production this should be your actual domain
-      // For development, use localhost
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
-const renderUrl = `${baseUrl}/pdf-render?data=${encodedData}`;
+      const baseUrl =
+        requestOrigin ??
+        process.env.NEXT_PUBLIC_BASE_URL ??
+        "http://localhost:3000";
 
-      // Set viewport to desktop size to ensure responsive breakpoints work correctly
+      const renderUrl = tid
+        ? `${baseUrl}/pdf-render?tid=${encodeURIComponent(tid)}`
+        : `${baseUrl}/pdf-render?data=${encodeURIComponent(JSON.stringify(cvData))}`;
+
       await page.setViewport({
         width: 1920,
         height: 1080,
         deviceScaleFactor: 1,
       });
 
-      // Navigate to the render page and wait for it to load
       await page.goto(renderUrl, {
         waitUntil: "networkidle0",
         timeout: this.config.timeout,
       });
 
-      // Wait for the CV content to be rendered (check if template is loaded)
-      try {
-        await page.waitForSelector('div[class*="bg-white"]', {
-          timeout: 5000,
-        });
-      } catch {
-        // If selector not found, just wait a bit
-      }
+      await page.waitForSelector('[data-pdf-ready="true"]', {
+        timeout: 15000,
+      });
 
-      // Wait a bit more for any dynamic content, fonts, or animations
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Generate PDF
       const pdf = await page.pdf({
         format: pdfOptions.format,
         margin: pdfOptions.margin,
