@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { DashboardHeader } from "../../_components/dashboard-header";
@@ -22,10 +22,37 @@ import { ProjectsSection } from "../../_components/cv-builder/projects-section";
 import { LanguagesSection } from "../../_components/cv-builder/languages-section";
 import { CertificationSection } from "../../_components/cv-builder/certification-section";
 import { CVPreview } from "../../_components/cv-preview";
-import { ArrowLeft, Save } from "lucide-react";
+import { CVActions } from "../../_components/cv-builder/cv-actions";
+import {
+  ArrowLeft,
+  Save,
+  History,
+  Cloud,
+  CloudOff,
+  RefreshCw,
+} from "lucide-react";
 import type { CV, UserProfile } from "@/types/types";
-import { getCVById, createCV, updateCV } from "@/services/cv.service";
+import {
+  getCVById,
+  createCV,
+  updateCV,
+  getCVStatus,
+} from "@/services/cv.service";
 import { withRetryAndToast } from "@/lib/api-helpers";
+import {
+  saveLocalCV,
+  getLocalCV,
+  autoSaveCV,
+  cancelAutoSave,
+  hasLocalChanges,
+  removeLocalCV,
+} from "@/lib/cv-local-storage";
+import {
+  mapBackendCVToFrontend,
+  hasParsedContent,
+  isParsingInProgress,
+} from "@/lib/cv-data-mapper";
+import { toast } from "sonner";
 
 export default function CVBuilderPage() {
   const router = useRouter();
@@ -56,11 +83,23 @@ export default function CVBuilderPage() {
     projects: [],
     languages: [],
     certifications: [],
-    template: "minimal",
+    template: "Minimal",
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [isLoadingCV, setIsLoadingCV] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  // Auto-save effect - saves to local storage on changes
+  useEffect(() => {
+    if (cvId && cvData && !isLoadingCV) {
+      autoSaveCV(cvId, cvData, 1500); // Auto-save after 1.5 seconds of no changes
+      setHasUnsavedChanges(true);
+    }
+
+    return () => cancelAutoSave();
+  }, [cvData, cvId, isLoadingCV]);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -76,22 +115,76 @@ export default function CVBuilderPage() {
   const loadCV = async () => {
     try {
       setIsLoadingCV(true);
+
+      // Check for local changes first
+      const localData = getLocalCV(cvId);
+
       // Try to load existing CV from API
-      const response = await withRetryAndToast(
-        () => getCVById(cvId),
-        {
-          errorMessage: "Failed to load CV",
-          retryOptions: {
-            maxRetries: 2,
-            retryCondition: (error: any) => {
-              // Don't retry on 404 (CV doesn't exist)
-              return error?.response?.status !== 404;
-            },
+      const response = await withRetryAndToast(() => getCVById(cvId), {
+        errorMessage: "Failed to load CV",
+        retryOptions: {
+          maxRetries: 2,
+          retryCondition: (error: any) => {
+            // Don't retry on 404 (CV doesn't exist)
+            return error?.response?.status !== 404;
           },
-        }
-      );
+        },
+      });
+
       if (response.data.success && response.data.data) {
-        setCvData(response.data.data);
+        const serverCV = response.data.data;
+
+        // Debug: Log the backend response to understand its structure
+        console.log("=== Backend CV Response ===");
+        console.log("Full Response:", JSON.stringify(serverCV, null, 2));
+        console.log("Has content:", !!serverCV.content);
+        console.log("Has parsedContent:", !!serverCV.parsedContent);
+        console.log("Parsing Status:", serverCV.parsingStatus);
+        console.log("========================");
+
+        // Check if CV is still being parsed
+        if (isParsingInProgress(serverCV)) {
+          toast.info("CV is being parsed", {
+            description: "Please wait while we extract your CV content...",
+          });
+          // Start polling for parsing completion
+          pollForParsingCompletion(cvId);
+        }
+
+        // If we have local changes AND server has no new parsed content, use local data
+        // But if server has parsed content, prefer server data (user might have re-uploaded CV)
+        if (localData?.isDirty && !hasParsedContent(serverCV)) {
+          setCvData(localData.cv);
+          toast.info("Loaded local changes", {
+            description: "You have unsaved local changes that will be used.",
+          });
+        } else {
+          // Map backend CV data to frontend form structure
+          const mappedCV = mapBackendCVToFrontend(serverCV);
+
+          // Debug: Log the mapped CV
+          console.log("=== Mapped CV ===");
+          console.log("Mapped Result:", JSON.stringify(mappedCV, null, 2));
+          console.log("=================");
+
+          setCvData(mappedCV);
+
+          // Clear local storage if we're using server data with parsed content
+          if (hasParsedContent(serverCV) && localData?.isDirty) {
+            // Clear dirty flag since we're using fresh server data
+            saveLocalCV(cvId, mappedCV);
+            toast.info("Loaded parsed CV data", {
+              description:
+                "Your CV has been parsed. Local changes were replaced with server data.",
+            });
+          } else if (hasParsedContent(serverCV)) {
+            toast.success("CV loaded successfully", {
+              description: "Your parsed CV content is ready for editing.",
+            });
+          }
+        }
+
+        setHasUnsavedChanges(localData?.isDirty ?? false);
       }
     } catch (err: any) {
       // CV doesn't exist (404) or other error
@@ -121,156 +214,108 @@ export default function CVBuilderPage() {
     }
   };
 
+  // Poll for parsing completion
+  const pollForParsingCompletion = async (cvId: string) => {
+    const maxAttempts = 30; // 30 attempts
+    const pollInterval = 2000; // 2 seconds
+    let attempts = 0;
+
+    const poll = async () => {
+      attempts++;
+      try {
+        const statusResponse = await getCVStatus(cvId);
+        const cvData = statusResponse.data?.data;
+
+        if (cvData && !isParsingInProgress(cvData)) {
+          // Parsing completed, reload the CV
+          const mappedCV = mapBackendCVToFrontend(cvData);
+          setCvData(mappedCV);
+          toast.success("CV parsing completed!", {
+            description:
+              "Your CV content has been extracted and is ready for editing.",
+          });
+          return;
+        }
+
+        if (attempts < maxAttempts) {
+          setTimeout(poll, pollInterval);
+        } else {
+          toast.warning("Parsing is taking longer than expected", {
+            description: "Please refresh the page to check the status.",
+          });
+        }
+      } catch (error) {
+        console.error("Error polling CV status:", error);
+        if (attempts < maxAttempts) {
+          setTimeout(poll, pollInterval);
+        }
+      }
+    };
+
+    poll();
+  };
+
   const handleSave = async () => {
     setIsSaving(true);
 
-    let updatedCv: any = null;
-
     try {
-      // Fields that should NOT be sent to the API (backend-only fields)
-      const fieldsToExclude = [
-        'id', 'createdAt', 'updatedAt', 
-        'metadata', 'settings', '_id', 'userId', 'status', 'source', 
-        'tags', 'parsingStatus', 'isParsed', 'parsingProgress', '__v',
-        'wordCount', 'sectionCount', 'viewCount', 'downloadCount', 
-        'shareCount', 'favoriteCount', 'isPublic', 'seoKeywords',
-        'theme', 'language', 'fontSize', 'pageFormat', 'margins'
-      ];
+      // Save to local storage first (guaranteed to work)
+      saveLocalCV(cvId, cvData);
+      setLastSaved(new Date());
+      setHasUnsavedChanges(false);
 
-      // Prepare CV data - only include fields that should be sent
-      const { id, createdAt, updatedAt, ...cvDataToSend } = cvData;
-      
-      // Clean up data - only include valid CV fields
-      const cleanedData: any = {};
-      
-      // List of valid CV fields that can be sent to API
-      const validFields = [
-        'title', 
-        'template', 
-        'personalInfo', 
-        'professionalSummary', 
-        'workExperience', 
-        'education', 
-        'skills', 
-        'projects', 
-        'languages', 
-        'certifications'
-      ];
-
-      validFields.forEach((key) => {
-        const value = (cvDataToSend as any)[key];
-        if (value !== undefined && value !== null) {
-          // Remove any backend-only fields from nested objects
-          if (typeof value === 'object' && !Array.isArray(value)) {
-            const cleanedValue: any = {};
-            Object.keys(value).forEach((subKey) => {
-              if (!fieldsToExclude.includes(subKey)) {
-                const subValue = value[subKey];
-                // Clean nested objects (like profileSetting)
-                if (typeof subValue === 'object' && subValue !== null && !Array.isArray(subValue)) {
-                  const cleanedSubValue: any = {};
-                  Object.keys(subValue).forEach((nestedKey) => {
-                    if (!fieldsToExclude.includes(nestedKey)) {
-                      // Include all fields from profileSetting, even if empty
-                      cleanedSubValue[nestedKey] = subValue[nestedKey];
-                    }
-                  });
-                  // Always include profileSetting even if empty
-                  if (subKey === 'profileSetting' || Object.keys(cleanedSubValue).length > 0) {
-                    cleanedValue[subKey] = cleanedSubValue;
-                  }
-                } else {
-                  cleanedValue[subKey] = subValue;
-                }
-              }
-            });
-            // Always include personalInfo even if empty
-            if (Object.keys(cleanedValue).length > 0 || key === 'personalInfo') {
-              cleanedData[key] = cleanedValue;
-            }
-          } else if (Array.isArray(value)) {
-            // Clean arrays - remove backend-only fields from array items
-            cleanedData[key] = value.map((item: any) => {
-              if (typeof item === 'object' && item !== null) {
-                const cleanedItem: any = {};
-                Object.keys(item).forEach((itemKey) => {
-                  if (!fieldsToExclude.includes(itemKey)) {
-                    cleanedItem[itemKey] = item[itemKey];
-                  }
-                });
-                return cleanedItem;
-              }
-              return item;
-            });
-          } else {
-            cleanedData[key] = value;
-          }
-        }
+      toast.success("CV saved!", {
+        description:
+          "Your changes are saved. Use 'Export PDF' to generate your CV.",
       });
 
-      updatedCv = cleanedData;
-
-      // Log the data being sent for debugging
-      console.log("Sending CV data:", JSON.stringify(updatedCv, null, 2));
-
-      // Check if CV exists by trying to get it
+      // Try to update title on the server (this is what the API accepts)
       try {
-        await getCVById(cvId);
-        // CV exists, update it
-        const response = await withRetryAndToast(
-          () => updateCV(cvId, updatedCv),
-          {
-            successMessage: "CV saved successfully",
-            errorMessage: "Failed to save CV",
-            retryOptions: {
-              maxRetries: 2,
-            },
-          }
-        );
-        if (response.data.success && response.data.data) {
-          const savedCv = response.data.data;
-          setCvData(savedCv);
-          // Update URL if ID changed (shouldn't happen, but just in case)
-          if (savedCv.id !== cvId) {
-            router.replace(`/cv-builder/${savedCv.id}`);
-          }
+        const patchData: any = {};
+        if (cvData.title) patchData.title = cvData.title;
+
+        if (Object.keys(patchData).length > 0) {
+          await updateCV(cvId, patchData);
+          console.log("Title synced with server");
         }
-      } catch (err: any) {
-        if (err?.response?.status === 404) {
-          // CV doesn't exist, create it
-          const response = await withRetryAndToast(
-            () => createCV(updatedCv),
-            {
-              successMessage: "CV created successfully",
-              errorMessage: "Failed to create CV",
-              retryOptions: {
-                maxRetries: 2,
-              },
-            }
-          );
-          if (response.data.success && response.data.data) {
-            const newCv = response.data.data;
-            setCvData(newCv);
-            // Update URL with the real ID from backend
-            if (newCv.id !== cvId) {
-              router.replace(`/cv-builder/${newCv.id}`);
-            }
-          }
-        } else {
-          throw err;
-        }
+      } catch (serverErr) {
+        // Server sync failed, but local save succeeded
+        console.log("Server sync skipped - local changes saved");
       }
     } catch (err: any) {
       console.error("Error saving CV:", err);
-      // Error is already handled by withRetryAndToast, but log details for debugging
-      if (err?.response?.data) {
-        console.error("API Error Details:", JSON.stringify(err.response.data, null, 2));
-      }
-      if (err?.response?.status === 400 && updatedCv) {
-        console.error("Bad Request - Request payload:", JSON.stringify(updatedCv, null, 2));
-      }
+      toast.error("Failed to save CV");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  // Force reload CV from server, ignoring local cache
+  const handleForceRefresh = async () => {
+    try {
+      setIsLoadingCV(true);
+
+      // Remove local cache for this CV
+      removeLocalCV(cvId);
+
+      // Reload from server
+      const response = await getCVById(cvId);
+
+      if (response.data.success && response.data.data) {
+        const serverCV = response.data.data;
+        const mappedCV = mapBackendCVToFrontend(serverCV);
+        setCvData(mappedCV);
+        setHasUnsavedChanges(false);
+
+        toast.success("CV reloaded from server", {
+          description: "Local cache cleared and CV refreshed.",
+        });
+      }
+    } catch (err) {
+      console.error("Error refreshing CV:", err);
+      toast.error("Failed to refresh CV");
+    } finally {
+      setIsLoadingCV(false);
     }
   };
 
@@ -286,22 +331,67 @@ export default function CVBuilderPage() {
     <div className="min-h-screen bg-background">
       <DashboardHeader />
       <div className="container mx-auto px-4 py-4 sm:py-8">
-        <div className="mb-4 flex flex-row gap-3 sm:mb-6 justify-between ">
+        <div className="mb-4 flex flex-row gap-3 sm:mb-6 justify-between items-center">
           <Button
             onClick={() => router.push("/dashboard")}
             className="gap-2 sm:w-auto"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Dashboard
+            <span className="hidden sm:inline">Back to Dashboard</span>
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="gap-2  sm:w-auto"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? "Saving..." : "Save CV"}
-          </Button>
+
+          <div className="flex items-center gap-2">
+            {/* Auto-save indicator */}
+            <div className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
+              {hasUnsavedChanges ? (
+                <>
+                  <CloudOff className="h-3 w-3" />
+                  <span>Unsaved</span>
+                </>
+              ) : lastSaved ? (
+                <>
+                  <Cloud className="h-3 w-3 text-green-500" />
+                  <span>Saved</span>
+                </>
+              ) : null}
+            </div>
+
+            <CVActions 
+              cvId={cvId} 
+              cvTitle={cvData.title} 
+              cvData={cvData} 
+              onCVUpdate={(updatedCV) => {
+                setCvData(updatedCV);
+                saveLocalCV(cvId, updatedCV);
+                setHasUnsavedChanges(true);
+              }}
+            />
+            <Button
+              variant="outline"
+              onClick={handleForceRefresh}
+              className="gap-2"
+              title="Reload CV from server (clears local cache)"
+            >
+              <RefreshCw className="h-4 w-4" />
+              <span className="hidden sm:inline">Refresh</span>
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => router.push(`/cv-builder/${cvId}/versions`)}
+              className="gap-2"
+            >
+              <History className="h-4 w-4" />
+              <span className="hidden sm:inline">Versions</span>
+            </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="gap-2 sm:w-auto"
+            >
+              <Save className="h-4 w-4" />
+              {isSaving ? "Saving..." : "Save"}
+            </Button>
+          </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-8">
