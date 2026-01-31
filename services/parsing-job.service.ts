@@ -1,7 +1,9 @@
 import api from "@/lib/axios";
+import { extractData } from "@/lib/api-helpers";
 
 export interface ParsingJob {
   id: string;
+  jobId?: string;
   cvId: string;
   status: "pending" | "processing" | "completed" | "failed";
   progress?: number;
@@ -35,10 +37,57 @@ export const startParsing = (data: StartParsingRequest) => {
 };
 
 /**
- * Get parsing history for a specific CV
+ * Get parsing history for a specific CV or all
  */
-export const getParsingHistory = (cvId: string) => {
-  return api.get<ParsingJobListResponse>("/v1/parsing-jobs/history", {
-    params: { cvId },
-  });
+export const getParsingHistory = (cvId?: string, options: { page?: number; limit?: number } = {}) => {
+  const params: any = { ...options };
+  if (cvId) params.cvId = cvId;
+  
+  return api.get<ParsingJobListResponse>("/v1/parsing-jobs/history", { params });
+};
+
+/**
+ * Get parsing stats
+ */
+export const getParsingStats = async () => {
+  const response = await api.get('/v1/parsing-jobs/stats');
+  return extractData(response);
+};
+
+/**
+ * Get supported formats
+ */
+export const getSupportedFormats = async () => {
+  const response = await api.get('/v1/parsing-jobs/formats');
+  return extractData(response);
+};
+
+/**
+ * Get parsing job status
+ */
+export const getParsingJobStatus = async (jobId: string) => {
+  const response = await api.get(`/v1/parsing-jobs/${jobId}`);
+  return extractData(response);
+};
+
+/**
+ * Get parsing job result
+ */
+export const getParsingJobResult = async (jobId: string) => {
+  const response = await api.get(`/v1/parsing-jobs/${jobId}/result`);
+  return extractData(response);
+};
+
+/**
+ * Cancel a parsing job
+ */
+export const cancelParsingJob = (jobId: string) => {
+  return api.post(`/v1/parsing-jobs/${jobId}/cancel`);
+};
+
+/**
+ * Retry a failed parsing job
+ */
+export const retryParsingJob = (jobId: string) => {
+  return api.post(`/v1/parsing-jobs/${jobId}/retry`);
 };

@@ -11,8 +11,15 @@ export * from "./health.service";
 // Authentication
 export * from "./auth.service";
 
-// User
-export * from "./user.service";
+// User (excluding duplicates from auth.service)
+export { 
+  updateCurrentUser, 
+  updateProfile, 
+  uploadAvatar, 
+  deleteAccount,
+  type UpdateUserRequest,
+  type UpdateUserResponse 
+} from "./user.service";
 
 // CV Operations
 export * from "./cv.service";
