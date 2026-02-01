@@ -28,7 +28,7 @@ const initialProfileState: ProfileSetting = {
 
 export default function ProfileSetupPage() {
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoading, setIsInitialLoading] = useState(true);
   const [profile, setProfile] = useState<ProfileSetting>(initialProfileState);
@@ -112,21 +112,23 @@ export default function ProfileSetupPage() {
     router.push("/dashboard");
   }, [router]);
 
-  // Fetch user profile on component mount
+  // Wait for auth to finish loading before redirecting; only redirect when definitely not logged in
   useEffect(() => {
+    if (loading) return;
     if (!user) {
       router.push("/login");
       return;
     }
-
     fetchUserProfile();
-  }, [user, router, fetchUserProfile]);
+  }, [user, loading, router, fetchUserProfile]);
 
-  if (isInitialLoading) {
+  if (loading || isInitialLoading) {
     return (
       <div className="min-h-screen bg-muted/30 p-4 py-12 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-muted-foreground">Loading profile...</p>
+          <p className="text-muted-foreground">
+            {loading ? "Checking authentication..." : "Loading profile..."}
+          </p>
         </div>
       </div>
     );
