@@ -134,7 +134,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
             </>
           )}
         </Button>
-        <Button
+        {/* <Button
           onClick={handleEnhance}
           disabled={isEnhance}
           className="gap-2 sm:mt-8"
@@ -149,7 +149,7 @@ export function CVPreview({ data, onTemplateChange }: CVPreviewProps) {
               AI Enhancement
             </>
           )}
-        </Button>
+        </Button> */}
       </div>
 
       <div className="overflow-hidden rounded-lg border shadow-xl">
