@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 import { DashboardHeader } from "../_components/dashboard-header";
@@ -65,7 +65,15 @@ export default function UploadPage() {
     },
     maxFiles: 1,
     maxSize: 10 * 1024 * 1024,
+    noClick: false,
+    noKeyboard: false,
   });
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
 
   const handleUpload = async () => {
     if (!file) {
@@ -197,7 +205,7 @@ export default function UploadPage() {
     }
   };
 
-  if (loading) {
+  if (loading || !user) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -343,7 +351,16 @@ export default function UploadPage() {
 
               {/* Upload Button */}
               {uploadStatus === "idle" && file && (
-                <Button onClick={handleUpload} className="w-full" size="lg">
+                <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleUpload();
+                  }}
+                  className="w-full"
+                  size="lg"
+                >
                   <Upload className="mr-2 h-5 w-5" />
                   Upload & Parse CV
                 </Button>
