@@ -35,7 +35,6 @@ import type { CV, UserProfile } from "@/types/types";
 import {
   getCVById,
   createCV,
-  updateCV,
   getCVStatus,
 } from "@/services/cv.service";
 import { withRetryAndToast } from "@/lib/api-helpers";
@@ -255,39 +254,13 @@ export default function CVBuilderPage() {
     poll();
   };
 
-  const handleSave = async () => {
+  const handleSave = () => {
     setIsSaving(true);
-
-    try {
-      // Save to local storage first (guaranteed to work)
-      saveLocalCV(cvId, cvData);
-      setLastSaved(new Date());
-      setHasUnsavedChanges(false);
-
-      toast.success("CV saved!", {
-        description:
-          "Your changes are saved. Use 'Export PDF' to generate your CV.",
-      });
-
-      // Try to update title on the server (this is what the API accepts)
-      try {
-        const patchData: any = {};
-        if (cvData.title) patchData.title = cvData.title;
-
-        if (Object.keys(patchData).length > 0) {
-          await updateCV(cvId, patchData);
-          console.log("Title synced with server");
-        }
-      } catch (serverErr) {
-        // Server sync failed, but local save succeeded
-        console.log("Server sync skipped - local changes saved");
-      }
-    } catch (err: any) {
-      console.error("Error saving CV:", err);
-      toast.error("Failed to save CV");
-    } finally {
-      setIsSaving(false);
-    }
+    saveLocalCV(cvId, cvData);
+    setLastSaved(new Date());
+    setHasUnsavedChanges(false);
+    toast.success("CV saved to device");
+    setIsSaving(false);
   };
 
   // Force reload CV from server, ignoring local cache
