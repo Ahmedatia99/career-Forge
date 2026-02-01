@@ -64,6 +64,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initAuth();
   }, []);
 
+  // Notify Valahala widget when user is identified (login or restore)
+  useEffect(() => {
+    if (typeof window === "undefined" || !user) return;
+
+    const name = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.email;
+    const userWithExtras = user as AuthUser & { businessCustomerId?: string; phone?: string };
+
+    window.dispatchEvent(
+      new CustomEvent("valaha:identify", {
+        detail: {
+          businessCustomerId: userWithExtras.businessCustomerId ?? user.id,
+          name,
+          email: user.email,
+          phone: userWithExtras.phone,
+        },
+      })
+    );
+  }, [user]);
+
   // Moved cookie setting logic inside loginUser function, using 'data'
   const loginUser = (data: LoginResponse) => {
     setToken({ token: data.token });

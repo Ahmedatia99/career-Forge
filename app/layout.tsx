@@ -12,6 +12,7 @@ import {
 import "./globals.css";
 import { AuthProvider } from "@/context/auth-context";
 import { Toaster } from "@/components/ui/sonner";
+import { ValahalaScript } from "@/app/_components/ValahalaScript";
 // Testing Fonts
 const _geist = Geist({
   subsets: ["latin"],
@@ -65,6 +66,7 @@ export default function RootLayout({
         {/* <Navbar01 /> */}
         <AuthProvider>{children}</AuthProvider>
         <Toaster />
+        <ValahalaScript />
       </body>
     </html>
   );
