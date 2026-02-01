@@ -56,51 +56,21 @@ export default function DashboardPage() {
   const handleCreateCV = async () => {
     try {
       setIsCreatingCV(true);
-
-      // Create CV payload matching API expectations
-      const cvPayload = {
-        fileName: "Untitled_CV.pdf",
-        parsedData: {
-          personalInfo: {
-            fullName:
-              user?.firstName && user?.lastName
-                ? `${user.firstName} ${user.lastName}`
-                : "New User",
-            email: user?.email || "user@example.com",
-            phone: "+1234567890",
-            location: "City, Country",
-          },
-          professionalSummary: "Professional summary goes here.",
-          experience: [
-            {
-              title: "Job Title",
-              company: "Company Name",
-              startDate: "2024-01",
-              endDate: "Present",
-            },
-          ],
-          education: [
-            {
-              degree: "Bachelor's Degree",
-              school: "University Name",
-              year: "2023",
-            },
-          ],
-          skills: ["Skill 1", "Skill 2"],
-        },
-      };
-
-      const response = await withRetryAndToast(() => createCV(cvPayload), {
-        successMessage: "CV created successfully",
-        errorMessage: "Failed to create CV",
-        retryOptions: {
-          maxRetries: 1,
-          retryCondition: (error: any) => {
-            const status = error?.response?.status;
-            return !status || (status >= 500 && status < 600);
+      // Create CV in backend first to get the real ID from response
+      const response = await withRetryAndToast(
+        () =>
+          createCV({
+            title: "Untitled CV",
+            template: "minimal",
+          }),
+        {
+          successMessage: "CV created successfully",
+          errorMessage: "Failed to create CV",
+          retryOptions: {
+            maxRetries: 2,
           },
         },
-      });
+      );
 
       if (response.data.success && response.data.data) {
         const cvId = response.data.data.id;
@@ -108,10 +78,7 @@ export default function DashboardPage() {
         router.push(`/cv-builder/${cvId}`);
       }
     } catch (err: any) {
-      // If API fails, redirect to CV builder with a temporary ID
-      // This allows the user to still create and edit CV locally
-      const tempId = `temp-${Date.now()}`;
-      router.push(`/cv-builder/${tempId}`);
+      console.error("Error creating CV:", err);
     } finally {
       setIsCreatingCV(false);
     }
@@ -165,10 +132,10 @@ export default function DashboardPage() {
           </div>
           <div className="flex gap-3">
             <Button
-              onClick={() => router.push("/upload")}
               variant="outline"
               size="lg"
               className="gap-2"
+              onClick={() => router.push("/upload")}
             >
               <Upload className="h-5 w-5" />
               Upload CV
@@ -204,15 +171,26 @@ export default function DashboardPage() {
             <p className="mb-6 text-center text-muted-foreground">
               Get started by creating your first professional CV
             </p>
-            <Button
-              onClick={handleCreateCV}
-              size="lg"
-              className="gap-2"
-              disabled={isCreatingCV}
-            >
-              <Plus className="h-5 w-5" />
-              {isCreatingCV ? "Creating..." : "Create Your First CV"}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Button
+                variant="outline"
+                size="lg"
+                className="gap-2"
+                onClick={() => router.push("/upload")}
+              >
+                <Upload className="h-5 w-5" />
+                Upload CV
+              </Button>
+              <Button
+                onClick={handleCreateCV}
+                size="lg"
+                className="gap-2"
+                disabled={isCreatingCV}
+              >
+                <Plus className="h-5 w-5" />
+                {isCreatingCV ? "Creating..." : "Create Your First CV"}
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

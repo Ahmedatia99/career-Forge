@@ -12,6 +12,7 @@ import {
   Sparkles,
   Settings,
   Globe,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -54,6 +55,13 @@ export function DashboardHeader() {
             className="text-sm font-medium hover:text-primary transition"
           >
             Dashboard
+          </Link>
+          <Link
+            href="/upload"
+            className="text-sm font-medium hover:text-primary transition flex items-center gap-1"
+          >
+            <Upload className="h-4 w-4" />
+            Upload
           </Link>
           <Link
             href="/ats"
@@ -174,6 +182,14 @@ export function DashboardHeader() {
               onClick={closeMobileMenu}
             >
               Dashboard
+            </Link>
+            <Link
+              href="/upload"
+              className="text-sm font-medium hover:text-primary transition py-2 flex items-center gap-2"
+              onClick={closeMobileMenu}
+            >
+              <Upload className="h-4 w-4" />
+              Upload
             </Link>
             <Link
               href="/ats"

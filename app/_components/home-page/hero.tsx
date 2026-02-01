@@ -36,7 +36,7 @@ export function Hero() {
               }
             >
               <Link
-                href="/dashboard"
+                href="/upload"
                 className={!user ? "cursor-not-allowed" : "cursor-pointer"}
               >
                 Upload CV
